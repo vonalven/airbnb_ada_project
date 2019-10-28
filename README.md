@@ -1,5 +1,8 @@
 # What characterises Airbnb around the world?
 
+![](images/table ./img/airbnb-part-de-marche-paris.jpg)
+(image retrieved from https://pagtour.info/on-evoque-souvent-airbnb-mais-rarement-les-problemes-des-clients/)
+
 # Abstract
 
 In this project, we would like to determine what makes a successful Airbnb housing. 
