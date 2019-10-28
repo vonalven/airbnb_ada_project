@@ -1,7 +1,7 @@
 # What characterises Airbnb around the world?
 
 ![](./img/airbnb-part-de-marche-paris.jpg)
-<center>(image retrieved from: https://pagtour.info/on-evoque-souvent-airbnb-mais-rarement-les-problemes-des-clients/)</center>
+<div style="text-align:center"><i(image retrieved from: https://pagtour.info/on-evoque-souvent-airbnb-mais-rarement-les-problemes-des-clients/)></div>
 
 # Abstract
 
