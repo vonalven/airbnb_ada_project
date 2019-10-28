@@ -1,4 +1,4 @@
-# What characterises airbnb around the world?
+# What characterises Airbnb around the world?
 
 # Abstract
 
@@ -11,6 +11,8 @@ A first phase of the research would be to focus on the data from the most visite
 3.  Istanbul    
 4.  Roma    
 5.  ... 
+
+
 In this section we would like to assess the popularity of airbnb as well as its impact on the housing. We expect this to be achieved by looking at the localisation and amount of airbnbs homes but also how many days per year are these homes for rent for example. 
 
 A second phase would be to 
