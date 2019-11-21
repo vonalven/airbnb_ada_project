@@ -20,7 +20,10 @@ Once the data set is fully usable, the previously exposed research question is t
 Random Forest modelling is used to classify features importance and to study the influence of features on the overall prediction. This can be useful for example to compare how the weight of different features changes across different neighbourhoods or cities. Model parameters tuning, data normalisation or standardisation and other common techniques are considered and tested to come up with the best problem modelling option.
 In this first phase, results could be quite obvious. However, the innovative and exciting results will come from the suggested comparison of the features relevance differences between different data subsets. 
 
-Machine learning or a simpler technique will also be applied to analyse the text-formatted features, such as for example the customers reviews.
+Machine learning or a simpler technique will also be applied to analyse the text-formatted features, such as for example the customers reviews. The results will be integrated as new features in the previous analyses.
+
+To complete the very diverse informations that are available for each city, an external database is integrated to the airbnb data. A lot of informations about the local environment could be analysed but our attention focuses on the public transports. In fact, we judged this parameter of particular importance for each type of customer lodging in an Airbnb. Other kinds of features such as the presence of important touristic attractions are not considered. Regardless of the lodging reason (holiday / business / ... trips), each customer could potentially need to use some kind of transportation mean to accomplish some displacement. For this purpose, the citylines.co database is used. The platform provides datasets for several cities around the world covering various aspects of the public transportation networks. 
+The collected data are cleaned and merged in an unique data frame from which some interesting features such as the distance of an Airbnb offer from the nearest station or the number of near stations are extracted.
 
 In a second phase, it will be interesting to learn from the best hosts. An in-depth analysis of the international presence of some hosts and/or of the multi-owners will bring us to answer to the following question: can something be learned on how to define a successful Airbnb from those important actors? And are really those international actors offering best services? One could in fact expect that owning several listings will provide a greater experience allowing the provision of a better service.
 
@@ -34,7 +37,7 @@ The summarised research questions are:
 
 # Dataset
 A brief summary of the previous descriptions of the dataset is provided here.
-The datasets we will use are accessible and downloadable here: http://insideairbnb.com/index.html. Inside Airbnb is an independent non-commercial website that groups Airbnb insides and allows to explore via some virtual tools how Airbnb is used in the world. The datasets for each cities are provided and accessible and have already been used by some data-scientist to create some data-stories. For each city the main collected informations are:
+The Airbnb datasets we will use are accessible and downloadable here: http://insideairbnb.com/index.html. Inside Airbnb is an independent non-commercial website that groups Airbnb insides and allows to explore via some virtual tools how Airbnb is used in the world. The datasets for each cities are provided and accessible and have already been used by some data-scientist to create some data-stories. For each city the main collected informations are:
 * detailed listing data
 * detailed calendar data
 * detailed calendar data
@@ -45,6 +48,16 @@ The datasets we will use are accessible and downloadable here: http://insideairb
 * GeoJSON file of neighbourhoods of the city
 
 All the informations about how the data have been collected and pre-processed is available in the source-website. The datasets are highly-comprehensive, very complete and usable. They have in fact been organised in a way easily usable by the virtual visualisation tools available on the source website. A relatively easy cleaning procedure is then implemented. The datasets are .csv files and well formatted. 
+
+The public transportation datasets we will use are accessible and downloadable here: https://www.citylines.co/data. This open-source platform is constantly updated and all the data cover several years up to the present days. For each city, the main collected informations are:
+* transportation systems
+* transportation lines
+* transportation sections
+* transportation section lines
+* transportation stations
+* transportation modes
+
+All the data are downloaded as .csv files and handled using pandas.
 
 # Code organisation:
 The project will be organised by class. Some open sources libraries are used to build very complete methods performing all the steps required in a full pipeline machine learning or visualisation analysis for example. For example, to easily manipulate folium maps and to provide some non-available functionalities, a class is created allowing to easily add different layes, different representation types, to bind colormaps to each layer with the possibility to control their display through buttons, ... An interesting method of the class will also provide the possibility to build geographical time-lapsed animations of data.
