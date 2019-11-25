@@ -3,6 +3,9 @@
 ![](./img/airbnb-part-de-marche-paris.jpg)
 (Image retrieved from: https://pagtour.info/on-evoque-souvent-airbnb-mais-rarement-les-problemes-des-clients/)
 
+# Milestone 2 Remark:
+For this milestone, the submitted notebook that has to be evaluated is called "main.jpynb"
+
 # Abstract
 Airbnb is a world-wide known online lodging marketplace which is well established in most of the principal touristic destinations. Since its foundation in 2008, the company experienced a continuous growth with a boom after 2012, ending up to a revenue of 2.6 billions US dollars in 2017, 12736 employees in 2019 and an astonishing 2 millions peoples lodging with Airbnb each night in October of this year. In the latest years Airbnb has often been targeted by some legal process and was put at the center of local scandals related to over-presence causing discriminations in the renting real estates marketplaces. 
 
@@ -66,6 +69,16 @@ To visualise results, several open-source tools are used. Among them we can cite
 * Supplement the data with external information about the local environment with the public transportation database. The collected data has to be cleaned and merged in an unique data frame from which some interesting features such as the distance of an Airbnb offer from the nearest station or the number of near stations are extracted.
 
 * Learning from the best hosts by an in-depth analysis of the international presence of some hosts and/or of the multi-owners to answer to the following question: can something be learned on how to define a successful Airbnb from those important actors? And are really those international actors offering best services?
+
+# List of tasks for milestone 3
+* Include transportats data-sets in out analysis
+
+* Improve RF model, for example with the already implemented hyperparameter tuning or to allow multitarget predictions
+
+* Analyse other cities, go on the international level
+
+* An interesting visual representation would be to show some folium maps, exploiting the already coded classes 
+
 
 
 # Questions for TAa
