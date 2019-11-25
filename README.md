@@ -71,7 +71,7 @@ To visualise results, several open-source tools are used. Among them we can cite
 * Learning from the best hosts by an in-depth analysis of the international presence of some hosts and/or of the multi-owners to answer to the following question: can something be learned on how to define a successful Airbnb from those important actors? And are really those international actors offering best services?
 
 # List of tasks for milestone 3
-* Include transportats data-sets in out analysis
+* Include transportations data-sets in out analysis
 
 * Improve RF model, for example with the already implemented hyperparameter tuning or to allow multitarget predictions
 
