@@ -5,6 +5,7 @@
 
 # Milestone 2 Remark:
 For this milestone, the submitted notebook that has to be evaluated is named "main.ipynb"
+/!\ For visualization purposes, the main.ipynb notebook should be opened with JupyterLab /!\
 
 # Abstract
 Airbnb is a world-wide known online lodging marketplace which is well established in most of the principal touristic destinations. Since its foundation in 2008, the company experienced a continuous growth with a boom after 2012, ending up to a revenue of 2.6 billions US dollars in 2017, 12736 employees in 2019 and an astonishing 2 millions people lodging with Airbnb each night in October of this year. In the latest years Airbnb has often been targeted by some legal process and was put at the center of local scandals related to over-presence causing discriminations in the renting real estates marketplaces. 
