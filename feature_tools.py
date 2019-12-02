@@ -328,8 +328,8 @@ class FeaturesTools():
             rf_ = RandomForestRegressor(oob_score = True)
 
             # Random search of parameters, using 4 fold cross validation
-            #rf_random = RandomizedSearchCV(estimator = rf_, param_distributions = random_grid, n_iter = 2, cv = 4, verbose=2, random_state=seed, n_jobs = -1)
-            rf_random = RandomizedSearchCV(estimator = rf_, param_distributions = random_grid, n_iter = 100, cv = 4, verbose=2, random_state=42, n_jobs = -1)
+            rf_random = RandomizedSearchCV(estimator = rf_, param_distributions = random_grid, n_iter = 2, cv = 4, verbose=2, random_state=seed, n_jobs = -1)
+            #rf_random = RandomizedSearchCV(estimator = rf_, param_distributions = random_grid, n_iter = 100, cv = 4, verbose=2, random_state=42, n_jobs = -1)
         
             # Fit the random search model
             rf_random.fit(train_data, train_labels)
@@ -348,6 +348,7 @@ class FeaturesTools():
 
             elapsed_time = time.time() - t0
             print('Elapsed time ... : ' + str(elapsed_time))
+            return rf_random.cv_results_
         else:
             # > n_estimators = number of trees in the forest
             # > The criterion is by default mse
