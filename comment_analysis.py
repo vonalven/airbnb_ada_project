@@ -1,19 +1,20 @@
-import string
 import re
 import nltk
-import matplotlib as plt
-import seaborn as sns
+import time
+import string
+import swifter
 import numpy as np
 import pandas as pd
-import matplotlib.pyplot as plt
-
+import seaborn as sns
+import matplotlib as plt
 from langdetect import detect
-
+import matplotlib.pyplot as plt
 from nltk.sentiment.vader import SentimentIntensityAnalyzer
 sid = SentimentIntensityAnalyzer()
 
 
 def get_sentiment(comment):
+    print('> Running parallelized get_sentiment...')
     '''
     takes a comment as an argument, sent_tokenize() it to seperate the sentences
     then computes the scores of negativity, neutrality, positivity and compound for each sentence
@@ -48,27 +49,30 @@ def get_sentiment(comment):
 
 
 def analyze_comments(comments):
+    print('> Running parallelized analyze_comments...')
+    start_time = time.time()
+    
     print('This data contains', comments.shape[0], 'lines.')
     
     # remove NaN
     comments = comments.dropna(how='any',axis=0)
-    
+
     # remove comments only filled with whitespaces
-    comments['isSpace'] = comments['comments'].apply(lambda x: x.isspace())
+    comments['isSpace'] = comments['comments'].swifter.apply(lambda x: x.isspace())
     comments = comments[comments.isSpace == False]
     comments = comments.drop(columns=['isSpace'])
-    
+
     # remove all non-alphabetical characters to allow detect() to work
     regex = re.compile('[^A-Za-zÀ-ÿ]')      
-    comments['rm_comments'] = comments['comments'].apply(lambda x: regex.sub(' ', x))
-    
+    comments['rm_comments'] = comments['comments'].swifter.apply(lambda x: regex.sub(' ', x))
+
     # again, remove comments only filled with whitespaces
-    comments['isSpace'] = comments['rm_comments'].apply(lambda x: x.isspace())
+    comments['isSpace'] = comments['rm_comments'].swifter.apply(lambda x: x.isspace())
     comments = comments[comments.isSpace == False]
     comments = comments.drop(columns=['isSpace'])
-    
+
     # detect the language of each comment
-    comments['language'] = comments['rm_comments'].apply(lambda x: detect(x))
+    comments['language'] = comments['rm_comments'].swifter.progress_bar(enable=True, desc='Language detection...').apply(lambda x: detect(x))
     
     # as the previous step takes some time, the result is saved and can be loaded for further use
     comments.to_pickle("./comments_languages.pkl")
@@ -78,13 +82,16 @@ def analyze_comments(comments):
     
     # non-alphabetical characters are removed but the ponctuation in the comments is kept
     regex2 = re.compile('[^A-Za-zÀ-ÿ?!.,:;]')     
-    comments_en['ap_comments'] = comments_en['comments'].apply(lambda x: regex2.sub(' ', x))
+    comments_en['ap_comments'] = comments_en['comments'].swifter.apply(lambda x: regex2.sub(' ', x))
     
     # remove unnecessary columns for next steps
     comments_en = comments_en.drop(columns=['comments', 'rm_comments', 'language'])
     
     # get sentiment
-    comments_en['sentiment'] = comments_en['ap_comments'].apply(lambda x: get_sentiment(x))
+    #ddata = dd['ap_comments'].from_pandas(comments_en, npartitions=16)
+    #comments_en['sentiment'] = ddata.map_partitions(lambda df: df.apply(lambda x: get_sentiment(x)).compute(get=get)
+    comments_en['sentiment'] = comments_en['ap_comments'].swifter.progress_bar(enable=True, desc='Getting sentiment...').apply(lambda x: get_sentiment(x))
+    #comments_en['sentiment'] = comments_en['ap_comments'].apply(lambda x: get_sentiment(x))
     
     # get a column for each different score (neg, pos, neu, comp) of each comment
     comments_en[['negativity','neutrality', 'positivity', 'compound']] = pd.DataFrame(comments_en.sentiment.values.tolist(), index = comments_en.index)
@@ -102,6 +109,7 @@ def analyze_comments(comments):
     
     # plot 
     #comments_en_copy.hist(bins=100)
+    print('\nElapsed time.... %-f\n'%(time.time()-start_time))
     
     return comments, comments_en, comments_en_copy
 
