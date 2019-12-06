@@ -7,17 +7,19 @@ import numpy as np
 import pandas as pd
 import seaborn as sns
 from PIL import Image
+from tabulate import tabulate
 import matplotlib.pyplot as plt
 from sklearn import preprocessing
 import plotly.graph_objects as go
 from folium.plugins import MiniMap
 from IPython.core.display import display
+from plotly.offline import plot as pyplot
 from sklearn.tree import export_graphviz
-from sklearn.metrics import confusion_matrix
 from sklearn.ensemble import RandomForestRegressor
 from treeinterpreter import treeinterpreter as ti, utils
 from wordcloud import WordCloud, STOPWORDS, ImageColorGenerator
-from sklearn.model_selection import GridSearchCV, RandomizedSearchCV
+from sklearn.model_selection import GridSearchCV, RandomizedSearchCV, train_test_split
+from sklearn.metrics import confusion_matrix, make_scorer, mean_squared_error, mean_absolute_error, median_absolute_error, r2_score
 
 
 class FeaturesTools():
@@ -98,7 +100,10 @@ class FeaturesTools():
         self.df             = df
         self.random_seed    = random_seed
         self.train_fraction = train_fraction
-        self.label_name     = label_name
+        if isinstance(label_name, str):
+            self.label_name = [label_name]
+        else:
+            self.label_name = label_name
         if (df is not None) and (label_name is not None):
             for key, value in self.split_df():
             #for key, value in self.split_df(self.df, self.label_name, self.train_fraction, self.random_seed):
@@ -127,9 +132,10 @@ class FeaturesTools():
         """
         
         if random_seed is None:
-            np.random.seed(self.random_seed)
-        else:
-            np.random.seed(random_seed)
+            #np.random.seed(self.random_seed)
+            random_seed  = self.random_seed
+        #else:
+        #    np.random.seed(random_seed)
         
         if train_fraction is None:
             train_fraction = self.train_fraction
@@ -141,22 +147,31 @@ class FeaturesTools():
             df = self.df
 
         
-        msk = np.random.rand(df.shape[0]) < train_fraction
+        #msk = np.random.rand(df.shape[0]) < train_fraction
         
-        train_label = ['train_label', df[msk][label_name].reset_index(drop = True)]
-        train_set   = ['train_set',   df[msk].drop(label_name, axis = 1).reset_index(drop = True)]
-        test_label  = ['test_label',  df[~msk][label_name].reset_index(drop = True)]
-        test_set    = ['test_set',    df[~msk].drop([label_name], axis = 1).reset_index(drop = True)]
-    
-        
+        x_train, x_test, y_train, y_test = train_test_split(df[df.columns.difference(label_name)], df[label_name], train_size = train_fraction,
+            test_size = 1 - train_fraction, random_state = random_seed)
+
+        train_set   = ['train_set',   x_train]
+        train_label = ['train_label', y_train]
+        test_set    = ['test_set',    x_test]
+        test_label  = ['test_label',  y_test]
+
         return [train_label, train_set, test_label, test_set]
     
     
-    def normalize_features(self, df = None):
-        """normalizes features of the input data frame individually, between 0 1nd 1
+    def preprocess_features(self, preprocessing_type, df = None):
+        """preprocess features according to the method specified by preprocessing_type.
+
+
         Parameters:
         -----------
         df : pandas DataFrame
+        preprocessing_type : string
+            preprocessing_type = normalize          -> scaling features of the input data frame individually to have unit norm
+            preprocessing_type = standardize        -> standartizes features of the input data frame individually to have zero mean, unit variance
+            preprocessing_type = scale_unit         -> scaling features of the input data frame individually, in the [0, 1] range
+            preprocessing_type = standardize_robust -> scaling features of the input data frame individually, robust to outliers!
 
         Returns:
         -----------
@@ -168,33 +183,24 @@ class FeaturesTools():
         print('> Running normalize_features...\n')
         if df is None:
             df = self.df
-            
-        norm = pd.DataFrame(preprocessing.normalize(df, axis = 0)) 
-        norm.columns = df.columns
-        return norm
-    
-    
-    def standardize_features(self, df = None):
-        """standartizes features of the input data frame individually
-        Parameters:
-        -----------
-        df : pandas DataFrame
-
-        Returns:
-        -----------
-        scaled: pandas DataFrame
-            the standardized data frame
-
-        """
         
-        print('> Running standardize_features...\n')
-        if df is None:
-            df = self.df
+        if preprocessing_type == 'normalize':
+            transf = pd.DataFrame(preprocessing.normalize(df, axis = 0)) 
+            transf.columns = df.columns
+        elif preprocessing_type == 'standardize':
+            scaler = preprocessing.StandardScaler()
+            transf = pd.DataFrame(scaler.fit_transform(df.values))
+            transf.columns = df.columns 
+        elif preprocessing_type == 'scale_unit':
+            scaler = preprocessing.MinMaxScaler()
+            transf = pd.DataFrame(scaler.fit_transform(df.values))
+            transf.columns = df.columns
+        elif preprocessing_type == 'standardize_robust':
+            scaler = preprocessing.RobustScaler()
+            transf = pd.DataFrame(scaler.fit_transform(df.values))
+            transf.columns = df.columns
 
-        scaler = preprocessing.StandardScaler()
-        scaled = pd.DataFrame(scaler.fit_transform(df.values))
-        scaled.columns = df.columns
-        return scaled
+        return transf
     
     
     def importance_df(self, column_names, importances, std):
@@ -226,7 +232,7 @@ class FeaturesTools():
     
     
     def randomForestAnalysis(self, train_data = None, train_labels = None, test_data = None, test_labels = None, 
-                             seed = None, n_trees = 500, plotResults = False, plotTree = False, tuneModelParameters = False):
+                             seed = None, n_trees = 500, plotResults = [False, False, False, False], tuneModelParameters = False):
         
         """performs a complete random forest analysis
         
@@ -249,8 +255,9 @@ class FeaturesTools():
             if not specified the class attribute is used
         n_trees : int
             number of trees used if tuneModelparameters is False. default: 500
-        plotResults : bool
+        plotResults : array of bool
             plot some of the analysis results
+            plotResults = [PlotFeaturesImportance, PlotCumulativeImportance, PlotPredictionsVsLabels, PlotTree]
         tuneModelparameters : bool
             if True, an optimization of the sklearn random forest model hyperparameters is performed and the best model is extracted.
             A grid search is performed
@@ -314,13 +321,16 @@ class FeaturesTools():
             min_samples_leaf = [1, 2, 4]
             # Method of selecting samples for training each tree
             # bootstrap = [True] # can onla use true, otherwise oob_score can not be computed and we use this score to evaluate the model
+            # When set to True, reuse the solution of the previous call to fit and add more estimators to the ensemble
+            # (similar to boosted trees), otherwise, just fit a whole new forest.
+            warm_start = [False, True]
             # Create the random grid
-            
             random_grid = {'n_estimators': n_estimators,
                            'max_features': max_features,
                            'max_depth': max_depth,
                            'min_samples_split': min_samples_split,
-                           'min_samples_leaf': min_samples_leaf}
+                           'min_samples_leaf': min_samples_leaf, 
+                           'warm_start': warm_start}
                            #'bootstrap': bootstrap}
                         
             # Random grid to search for best hyperparameters
@@ -328,11 +338,16 @@ class FeaturesTools():
             rf_ = RandomForestRegressor(oob_score = True)
 
             # Random search of parameters, using 4 fold cross validation
-            rf_random = RandomizedSearchCV(estimator = rf_, param_distributions = random_grid, n_iter = 2, cv = 4, verbose=2, random_state=seed, n_jobs = -1)
-            #rf_random = RandomizedSearchCV(estimator = rf_, param_distributions = random_grid, n_iter = 100, cv = 4, verbose=2, random_state=42, n_jobs = -1)
+            #rf_random = RandomizedSearchCV(estimator = rf_, param_distributions = random_grid, n_iter = 2, cv = 2, verbose=2, random_state = seed, 
+            #                n_jobs = -1, scoring = {'MSE': make_scorer(mean_squared_error)}, refit = 'MSE', return_train_score = True)
+            rf_random = RandomizedSearchCV(estimator = rf_, param_distributions = random_grid, n_iter = 100, cv = 4, verbose=2, random_state = seed, 
+                            n_jobs = -1, scoring = {'MSE': make_scorer(mean_squared_error)}, refit = 'MSE', return_train_score = True)
         
             # Fit the random search model
-            rf_random.fit(train_data, train_labels)
+            if train_labels.shape[1] == 1:
+                rf_random.fit(train_data, train_labels.values.ravel())
+            else:
+                rf_random.fit(train_data, train_labels)
             
             # print best parameters:
             print('\nThe best RF model hyperparameters from RandomizedSearchCV are:')
@@ -348,7 +363,7 @@ class FeaturesTools():
 
             elapsed_time = time.time() - t0
             print('Elapsed time ... : ' + str(elapsed_time))
-            return rf_random.cv_results_
+        
         else:
             # > n_estimators = number of trees in the forest
             # > The criterion is by default mse
@@ -362,20 +377,52 @@ class FeaturesTools():
                                        bootstrap = True,
                                        random_state = seed)
             
-            
-            rf.fit(train_data, train_labels)
+            if train_labels.shape[1] == 1:
+                rf.fit(train_data, train_labels.values.ravel())
+            else:
+                rf.fit(train_data, train_labels)
+
             
             # select one tree for visualization
             visual_tree = rf.estimators_[1]
         
         # predictions on test data:
         predictions = rf.predict(test_data)
-        
-        # average absolute error:
-        errors = abs(predictions - test_labels)
+
+        # useful post about errors: 
+        # https://stats.stackexchange.com/questions/327464/mape-vs-r-squared-in-regression-models
+
+        df_err = pd.DataFrame()
+
+        col_names = test_labels.columns
+        col_names = np.append(col_names, 'AVG')
+
+        # R^2 error
+        r2_err = r2_score(test_labels, predictions, multioutput = 'raw_values')
+        df_err = df_err.append(pd.Series(np.append(r2_err, np.mean(r2_err)), name = 'R^2 error'))
+
+        # MSE error:
+        mse = mean_squared_error(test_labels, predictions, multioutput = 'raw_values')
+        df_err = df_err.append(pd.Series(np.append(mse, np.mean(mse)), name = 'MSE error'))
+
+        # MAE error:
+        mae = mean_absolute_error(test_labels, predictions, multioutput = 'raw_values')
+        df_err = df_err.append(pd.Series(np.append(mae, np.mean(mae)), name = 'MAE error'))
+
+        # median absolute error (does not support multioutput on scikit-learn version is 0.20.1.):
+        med_err = []
+        if test_labels.shape[1]>1:
+            for i in range(test_labels.shape[1]):
+                med_err = np.append(med_err, median_absolute_error(test_labels.iloc[:, i], predictions[:, i]))
+        else:
+            med_err = np.append(med_err, median_absolute_error(test_labels, predictions))
+
+        df_err = df_err.append(pd.Series(np.append(med_err, np.mean(med_err)), name = 'Median Absolute error'))
+
+        df_err.columns = col_names
         
         # mean absolute percentage error (MAPE)
-        mape = np.mean(100 * (errors / test_labels))
+        # mape = np.mean(100 * (errors / test_labels))
         
         # build df with features importance
         importance = rf.feature_importances_
@@ -388,16 +435,19 @@ class FeaturesTools():
         # No overfit is observed if the OOB score and the Test (Validation) score are very similar
         
         print('> randomForestAnalysis results...')
-        print('R^2 Training Score:     %f' %(rf.score(train_data, train_labels)))
+        # print('R^2 Training Score:     %f' %(rf.score(train_data, train_labels)))
         print('R^2 OOB Score:          %f' %(rf.oob_score_))
-        print('R^2 Test Score:         %f' %(rf.score(test_data, test_labels)))
-        print('Average absolute error: %f units' %(round(np.mean(errors), 2)))
-        print('Accuracy:               %f%%\n\n' %(round(100 - mape, 2)))
+        # print('R^2 Test Score:         %f' %(rf.score(test_data, test_labels)))
+        #print('MSE Error:              %f' %(mse))
+        #print('MAE Error:              %f' %(mae))
+        #print('Median Absolute Error:  %f (insensible to outliers)' %(med_err))
+        # print('Accuracy:               %f%%\n\n' %(round(100 - mape, 2)))
         #print("Feature ranking:")
         #display(df_importance)
-
+        print('\n> Performances comparison for the target(s) variables:\n')
+        print(tabulate(df_err, headers='keys', tablefmt='psql', numalign = 'center', stralign = 'center'))
         
-        if plotResults:
+        if plotResults[0]:
             # error bars are so small that are not visible
             sns.barplot(x = 'feature_importance', y = 'feature', color='skyblue', data = df_importance, orient = 'h', ci = 'sd', capsize=.2)
             fig = plt.gcf()
@@ -407,8 +457,8 @@ class FeaturesTools():
             plt.title('Feature importance of each feature', size = 22)
             plt.tick_params(labelsize = 10)
             plt.show()
-        
-        
+
+        if plotResults[1]:
             # plot Cumulative importance.
             x_values = np.arange(0, len(cumulative_importance))
             plt.plot(x_values, cumulative_importance, 'k-')
@@ -419,32 +469,53 @@ class FeaturesTools():
             ax = plt.gca()
             ax.set_xticks(x_values)
             ax.set_xticklabels(df_importance.feature, rotation = 45, ha = 'right')
-            plt.xlabel('Features', size = 22); 
-            plt.ylabel('Cumulative Importance', size = 22); 
+            plt.xlabel('Features', size = 22)
+            plt.ylabel('Cumulative Importance', size = 22)
             plt.title('Cumulative importantce of the features', size = 22)
             plt.tick_params(labelsize = 10)
             plt.legend([l1], ['95% threshold'], loc = 'center right', fontsize = 20)
             plt.show()
-            
-            if plotTree:
-                # visualize the tree
-                export_graphviz(visual_tree, out_file = './RandomTree.dot', feature_names = train_data.columns, 
-                    precision = 2, filled = True, rounded = True, max_depth = None)
-                (graph, ) = pydot.graph_from_dot_file('./RandomTree.dot')
-                graph.write_png('./RandomTree.png')
-            
 
-                # Limit depth of tree to 3 levels
-                # rf_small = RandomForestRegressor(n_estimators=10, max_depth = 3)
-                # rf_small.fit(train_features, train_labels)
-                # Extract the small tree
-                # tree_small = rf_small.estimators_[5]
-                # Save the tree as a png image
-                # export_graphviz(tree_small, out_file = 'small_tree.dot', feature_names = feature_list, rounded = True, precision = 1)
-                # (graph, ) = pydot.graph_from_dot_file('small_tree.dot')
-                # graph.write_png('small_tree.png');
+        if plotResults[2]:
+            # plot labels vs preictions
+            fig = plt.figure(figsize = (20, 6))
+            x_values = np.arange(0, len(predictions))
+            for ff in range(test_labels.shape[1]):
+                plt.subplot(1, test_labels.shape[1], ff + 1)
+                plt.scatter(x_values, test_labels.iloc[:, ff], label = 'target')
+                if test_labels.shape[1]>1:
+                    plt.scatter(x_values, predictions[:, ff], label = 'prediction')
+                else:
+                    plt.scatter(x_values, predictions, label = 'prediction')
+                fig = plt.gcf()
+                fig.set_size_inches(20, 6)
+                plt.ylabel(test_labels.columns[ff], size = 22)
+                plt.xlabel('Sample ID', size = 22)
+                plt.legend(fontsize = 20)
+                plt.tick_params(labelsize = 10)
+
+        if plotResults[3]:
+            # visualize the tree
+            export_graphviz(visual_tree, out_file = './RandomTree.dot', feature_names = train_data.columns, 
+                precision = 2, filled = True, rounded = True, max_depth = None)
+            (graph, ) = pydot.graph_from_dot_file('./RandomTree.dot')
+            graph.write_png('./RandomTree.png')
         
-        return df_importance, rf
+
+            # Limit depth of tree to 3 levels
+            # rf_small = RandomForestRegressor(n_estimators=10, max_depth = 3)
+            # rf_small.fit(train_features, train_labels)
+            # Extract the small tree
+            # tree_small = rf_small.estimators_[5]
+            # Save the tree as a png image
+            # export_graphviz(tree_small, out_file = 'small_tree.dot', feature_names = feature_list, rounded = True, precision = 1)
+            # (graph, ) = pydot.graph_from_dot_file('small_tree.dot')
+            # graph.write_png('small_tree.png');
+    
+        if tuneModelParameters:
+            return df_importance, df_err, rf, rf_random.cv_results_, rf_random.best_params_
+        else:
+            return df_importance, df_err, rf
         
         
     def treeInterpreter(self, rf_model, df = None):
@@ -467,6 +538,10 @@ class FeaturesTools():
         """
         
         print('> Running treeInterpreter...\n')
+
+        if rf_model.n_outputs_ > 1:
+            print('SORRY, tree interpretation not possible for a multilabel model using treeInterpreter method from FeaturesTools class !!!\n')
+            return [], [], []
         
         # INTERPRETING RANDOM FORESTS:
         # https://blog.datadive.net/random-forest-interpretation-with-scikit-learn/
@@ -525,6 +600,7 @@ class FeaturesTools():
         """
         
         print('> Running correlationAnalysis...\n')
+        
         if df is None:
             df = self.df
             
@@ -628,13 +704,13 @@ class FeaturesTools():
                 width = 0
               ),
               label =  df_contributions.labels,
-              #color = df_contributions.Color
+              color = df_contributions.color.dropna(axis=0)
             ),
             link = dict(
               source = df_contributions.source,
               target = df_contributions.target,
               value  = df_contributions.contribution,
-              #color = df_contributions.LinkColor,
+              color = df_contributions.linkColor,
           )
         )
 
@@ -647,9 +723,49 @@ class FeaturesTools():
         )
 
         fig = go.Figure(data=[data_trace], layout=layout)
-        from plotly.offline import plot as pyplot
+        
         html_sankey = pyplot(fig, filename='sankey_plot.html', auto_open=False)
         with open('sankey_plot.html', 'r') as f:
             html = f.read()
         fig.show()
+    
+    def map_to_color(self, color_palette, list_of_values, min_range = None, max_range = None):
+        """map a list of values to discrete colors
+        If the min_range is specified, any value smaller than this value will be assigned to the minimal color. Similarly for max_range.
+        
+        Parameters:
+        -----------
+        color_palette  : array of hex-encoded colors
+        list_of_values : array
+            the list of values that have to be mapped to a color
+        min_range      : float
+            the minimal value associated to the minimum color (default = None)
+        max_range      : float
+            the maximal value associated to the minimum color (default = None)
+        
+        Returns:
+        -----------
+        mapped_colors : array
+            the list of colors mapped to the input values
+        """
+        
+        if min_range == None:
+            min_range = np.min(list_of_values)
+        if max_range == None:
+            max_range = np.max(list_of_values)
+        
+        intervals = np.linspace(min_range, max_range, len(color_palette)+1)
+
+        mapped_colors = []
+        for i in list_of_values:
+            # we have N-1 colors
+            for c in range (0, len(intervals) - 1):
+                if c == 0 and i < intervals[c]:
+                    mapped_colors = np.append(mapped_colors, color_palette[c])
+                if c < len(intervals) and i >= intervals[c] and i < intervals[c + 1]:
+                    mapped_colors = np.append(mapped_colors, color_palette[c])
+                    break
+                elif c == len(intervals) - 2 and i >= intervals[c]:
+                    mapped_colors = np.append(mapped_colors, color_palette[c])
+        return mapped_colors
         

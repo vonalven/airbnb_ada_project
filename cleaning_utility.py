@@ -115,7 +115,13 @@ class CleaningUtility():
         """
         
         print('> Running host_activity_period...')
-        df[column] = 2019 - pd.DatetimeIndex(df[column]).year
+        start_year = pd.DatetimeIndex(df[column]).year
+        start_month = pd.DatetimeIndex(df[column]).month
+        current_month = 10
+     
+        period_activity_months = current_month + 12*(2019-1-start_year) + (12 - start_month)
+
+        df[column] = period_activity_months
 
         unique_values = df[column].unique()
         if np.isnan(unique_values).any():
