@@ -15,6 +15,7 @@ from folium.plugins import MiniMap
 from IPython.core.display import display
 from plotly.offline import plot as pyplot
 from sklearn.tree import export_graphviz
+from sklearn.utils.validation import check_array
 from sklearn.ensemble import RandomForestRegressor
 from treeinterpreter import treeinterpreter as ti, utils
 from wordcloud import WordCloud, STOPWORDS, ImageColorGenerator
@@ -408,6 +409,11 @@ class FeaturesTools():
         # MAE error:
         mae = mean_absolute_error(test_labels, predictions, multioutput = 'raw_values')
         df_err = df_err.append(pd.Series(np.append(mae, np.mean(mae)), name = 'MAE error'))
+        
+        # MAPE error:
+        y_true, y_pred = np.array(test_labels), np.array(predictions)
+        mape = np.mean(np.abs((y_true - y_pred) / y_true)) * 100
+        df_err = df_err.append(pd.Series(np.append(mape, np.mean(mape)), name = 'MAPE error'))
 
         # median absolute error (does not support multioutput on scikit-learn version is 0.20.1.):
         med_err = []
@@ -423,6 +429,7 @@ class FeaturesTools():
         
         # mean absolute percentage error (MAPE)
         # mape = np.mean(100 * (errors / test_labels))
+        
         
         # build df with features importance
         importance = rf.feature_importances_
@@ -768,4 +775,7 @@ class FeaturesTools():
                 elif c == len(intervals) - 2 and i >= intervals[c]:
                     mapped_colors = np.append(mapped_colors, color_palette[c])
         return mapped_colors
+    
+
+
         
