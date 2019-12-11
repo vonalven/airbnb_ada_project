@@ -525,7 +525,7 @@ class FeaturesTools():
             return df_importance, df_err, rf
         
         
-    def treeInterpreter(self, rf_model, df = None):
+    def tree_Interpreter(self, rf_model, df = None):
         """allows the interpretation of a sklearn random forest model
         
         Parameters:
