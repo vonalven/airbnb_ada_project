@@ -115,8 +115,8 @@ class CleaningUtility():
         """
         
         print('> Running host_activity_period...')
-        start_year = pd.DatetimeIndex(df[column]).year
-        start_month = pd.DatetimeIndex(df[column]).month
+        start_year = pd.DatetimeIndex(pd.to_datetime(df[column], errors = 'coerce')).year
+        start_month = pd.DatetimeIndex(pd.to_datetime(df[column], errors = 'coerce')).month
         current_month = 10
      
         period_activity_months = current_month + 12*(2019-1-start_year) + (12 - start_month)
@@ -130,6 +130,7 @@ class CleaningUtility():
 
     def list_to_number_of_services(self, df, columns, drop_col = True):
         """converts list (array) of services to number of elements in the list
+        Non-string rows are deleted!
         Parameters:
         -----------
         df : pandas DataFrame
@@ -144,10 +145,18 @@ class CleaningUtility():
         """
         
         print('> Running list_to_number_of_services...')
+
+        #counter_deleted = 0
         for col in columns:
+            #size_before = df.shape[0]
+            #df = df.loc[df[col].apply(lambda x: isinstance(x, str))]
+            #size_after = df.shape[0]
+            #counter_deleted += size_after-size_before
             df['number_of_' + col] = df[col].apply(lambda x: len(x.replace('"', '').replace('{', '').replace('}', '').split(',')))
             if drop_col:
                 df = df.drop(col, axis = 1) 
+            #if counter_deleted > 0:
+                #print('   --> %.0f rows deleted because not containing strings!'%(counter_deleted))
         return df
 
     def convert_to_one_hot_label(self, df, columns):
@@ -262,7 +271,7 @@ class CleaningUtility():
 
     def prices_per_person(self, df, price_columns, nb_persons_column):
         """computes the price per person
-        
+        Non-float rows are deleted!
         Parameters:
         -----------
         df : pandas DataFrame
@@ -278,10 +287,18 @@ class CleaningUtility():
         """
         
         print('> Running prices_per_person...')
+        
         df[price_columns] = df[price_columns].astype('float64')
         df[nb_persons_column] = df[nb_persons_column].astype('float64')
+        #counter_deleted = 0
         for p_c in price_columns:
+            #size_before = df.shape[0]
+            #df = df.loc[df[p_c].apply(lambda x: isinstance(x, float))]
+            #size_after = df.shape[0]
+            #counter_deleted += size_after-size_before
             df[p_c + '_per_person'] = df[p_c] / df[nb_persons_column]
+        #if counter_deleted > 0:
+            #print('   --> %.0f rows deleted because not containing numbers!'%(counter_deleted))
         return df
 
     def select_numeric_column_only(self, df):
@@ -313,10 +330,10 @@ class CleaningUtility():
 
         """
 
-        print('> Running remove_rowas_with_infinite...')
+        print('> Running remove_rows_with_infinite...')
         
 
-        if np.isinf(df).any().any():
+        if np.isinf(df.values).any().any():
             print('   > The columns with inf values are:')
             print(df.columns.to_series()[np.isinf(df).any()])
             df = df.replace([np.inf, -np.inf], np.nan)

@@ -233,7 +233,8 @@ class FeaturesTools():
     
     
     def randomForestAnalysis(self, train_data = None, train_labels = None, test_data = None, test_labels = None, 
-                             seed = None, n_trees = 500, plotResults = [False, False, False, False], tuneModelParameters = False):
+                             seed = None, n_trees = 500, plotResults = [False, False, False, False], tuneModelParameters = False, 
+                             saveFigures = [False, False, False, False], saveTag = None, saveLocation = None):
         
         """performs a complete random forest analysis
         
@@ -262,6 +263,8 @@ class FeaturesTools():
         tuneModelparameters : bool
             if True, an optimization of the sklearn random forest model hyperparameters is performed and the best model is extracted.
             A grid search is performed
+        saveFigures : bool
+            if True, figures are saved.
         
 
         Returns:
@@ -454,7 +457,7 @@ class FeaturesTools():
         print('\n> Performances comparison for the target(s) variables:\n')
         print(tabulate(df_err, headers='keys', tablefmt='psql', numalign = 'center', stralign = 'center'))
         
-        if plotResults[0]:
+        if plotResults[0] | saveFigures[0]:
             # error bars are so small that are not visible
             sns.barplot(x = 'feature_importance', y = 'feature', color='skyblue', data = df_importance, orient = 'h', ci = 'sd', capsize=.2)
             fig = plt.gcf()
@@ -463,9 +466,16 @@ class FeaturesTools():
             plt.ylabel('Features', size = 22)
             plt.title('Feature importance of each feature', size = 22)
             plt.tick_params(labelsize = 10)
-            plt.show()
+            if saveFigures[0] & ~plotResults[0]:
+                plt.savefig(saveLocation + '/' + saveTag + '_importance_bars.pdf', bbox_inches='tight')
+                plt.close(fig)
+            elif saveFigures[0] & plotResults[0]:
+                plt.savefig(saveLocation + '/' + saveTag + '_importance_bars.pdf', bbox_inches='tight')
+                plt.show()
+            else:
+                plt.show()
 
-        if plotResults[1]:
+        if plotResults[1] | saveFigures[1]:
             # plot Cumulative importance.
             x_values = np.arange(0, len(cumulative_importance))
             plt.plot(x_values, cumulative_importance, 'k-')
@@ -481,10 +491,17 @@ class FeaturesTools():
             plt.title('Cumulative importantce of the features', size = 22)
             plt.tick_params(labelsize = 10)
             plt.legend([l1], ['95% threshold'], loc = 'center right', fontsize = 20)
-            plt.show()
+            if saveFigures[1] & ~plotResults[1]:
+                plt.savefig(saveLocation + '/' + saveTag + '_cumulative_importance.pdf', bbox_inches='tight')
+                plt.close(fig)
+            elif saveFigures[1] & plotResults[1]:
+                plt.savefig(saveLocation + '/' + saveTag + '_cumulative_importance.pdf', bbox_inches='tight')
+                plt.show()
+            else:
+                plt.show()
 
-        if plotResults[2]:
-            # plot labels vs preictions
+        if plotResults[2] | saveFigures[2]:
+            # plot labels vs predictions
             fig = plt.figure(figsize = (20, 6))
             x_values = np.arange(0, len(predictions))
             for ff in range(test_labels.shape[1]):
@@ -500,8 +517,16 @@ class FeaturesTools():
                 plt.xlabel('Sample ID', size = 22)
                 plt.legend(fontsize = 20)
                 plt.tick_params(labelsize = 10)
+            if saveFigures[2] & ~plotResults[2]:
+                plt.savefig(saveLocation + '/' + saveTag + '_labels_vs_predictions.pdf', bbox_inches='tight')
+                plt.close(fig)
+            elif saveFigures[2] & plotResults[2]:
+                plt.savefig(saveLocation + '/' + saveTag + '_labels_vs_predictions.pdf', bbox_inches='tight')
+                plt.show()
+            else:
+                plt.show()
 
-        if plotResults[3]:
+        if plotResults[3] | saveFigures[3]:
             # visualize the tree
             export_graphviz(visual_tree, out_file = './RandomTree.dot', feature_names = train_data.columns, 
                 precision = 2, filled = True, rounded = True, max_depth = None)
