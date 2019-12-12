@@ -14,7 +14,6 @@ sid = SentimentIntensityAnalyzer()
 
 
 def get_sentiment(comment):
-    print('> Running parallelized get_sentiment...')
     '''
     takes a comment as an argument, sent_tokenize() it to seperate the sentences
     then computes the scores of negativity, neutrality, positivity and compound for each sentence
@@ -107,7 +106,7 @@ def analyze_comments(comments):
     comments_en_copy = comments_en_copy.groupby('listing_id').mean()
     print('There are', comments_en_copy.shape[0], 'different housings in this city.')
     
-    # plot 
+    # print 
     #comments_en_copy.hist(bins=100)
     print('\nElapsed time.... %-f\n'%(time.time()-start_time))
     

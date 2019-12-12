@@ -587,7 +587,7 @@ class FeaturesTools():
         
         
       
-    def correlationAnalysis(self, df = None, method = 'pearson', plotMatrix = True, printMaxCorr = True):
+    def correlationAnalysis(self, df = None, method = 'pearson', plotMatrix = True, printTopCorrelated = True):
         """computes the correlation matrix of the input data
         
         Parameters:
@@ -598,7 +598,8 @@ class FeaturesTools():
             method used to compute correlation. Can be for example perason or sparman
         plotMatrix : bool
             if true, plot the lower half diagonal of the correlation matrix with an heatmap
-        printMaxCorr : bool
+        printTopCorrelated : bool
+            if true, print the maximally and minimally correlated features
 
         Returns:
         -----------
@@ -610,8 +611,11 @@ class FeaturesTools():
         
         if df is None:
             df = self.df
-            
-        corr = df.corr(method = 'pearson')
+        
+        # NANs can be computed from corr. NaN are present if 2 columns contain only one value (same columns, for example all zeros).
+        # The std will be 0. When the correlation coefficient is calculated, we divide by the standard deviation, which leads to a NA.
+        # Therefore, remove those columns/rows!
+        corr = df.corr(method = 'pearson').dropna(axis = 0, how = 'all').dropna(axis = 1, how = 'all')
 
         # Generate a mask for the upper triangle
         mask = np.zeros_like(corr, dtype=np.bool)
@@ -619,7 +623,7 @@ class FeaturesTools():
         
         if plotMatrix:
             #chart = sns.heatmap(corr, mask=mask, square=True, linewidths=.5, cbar_kws={"shrink": .5}, xticklabels=True, yticklabels=True)
-            chart = sns.heatmap(abs(corr), mask=mask, square=True, linewidths=.5, cbar_kws={"shrink": .5}, xticklabels=True, yticklabels=True)
+            chart = sns.heatmap(abs(corr), mask=mask, square=True, cbar_kws={"shrink": .5}, xticklabels=True, yticklabels=True, vmin=0, vmax=1)
             fig = plt.gcf()
             fig.set_size_inches(20, 20)
             plt.tick_params(labelsize=10)
@@ -630,6 +634,19 @@ class FeaturesTools():
             plt.title('Features correlation matrix - ' + method, fontsize = 22, \
                       fontweight='bold')
             plt.show()
+        
+        if printTopCorrelated:
+            s = corr.abs().unstack()
+            s = s.sort_values(kind="quicksort")
+            n_elements = corr.shape[0]
+            print('The 20 less correlated features are:')
+            print(s[1:20])
+
+            print('\nThe 20 most correlated features are:')
+            print(s.iloc[-(n_elements+20):-n_elements])
+
+            
+
         
         # print: variable... is max correlated with....
         #if printMaxCorr:

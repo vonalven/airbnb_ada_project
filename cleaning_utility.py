@@ -299,3 +299,50 @@ class CleaningUtility():
         print('> Running select_numeric_column_only...')
         df = df[df.notnull().any(axis=1)]
         return df
+    
+    def remove_rows_with_infinite(self, df):
+        """determines rows contain infinite values and remove those columns.
+        For examples inf could be present if the application of prices_per_person generates divisions by 0
+        Parameters:
+        -----------
+        df : pandas DataFrame
+
+        Returns:
+        -----------
+        df : pandas DataFrame
+
+        """
+
+        print('> Running remove_rowas_with_infinite...')
+        
+
+        if np.isinf(df).any().any():
+            print('   > The columns with inf values are:')
+            print(df.columns.to_series()[np.isinf(df).any()])
+            df = df.replace([np.inf, -np.inf], np.nan)
+            df = df.dropna()
+        else:
+            print('   > Any infinite value was found!')
+        
+        return df
+    
+    def remove_by_threshold(self, df, column_name, threshold):
+        """removes rows in a df column that are above a threshold
+        
+        Parameters:
+        -----------
+        df : pandas DataFrame
+        column_name : string
+            the column on which the threshold is applied
+        threshold : float
+
+        Returns:
+        -----------
+        df : pandas DataFrame
+
+        """
+
+        df = df.drop(df[df[column_name] > threshold].index)
+
+
+        return df
