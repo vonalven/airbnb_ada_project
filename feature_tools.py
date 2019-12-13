@@ -399,34 +399,44 @@ class FeaturesTools():
         df_err = pd.DataFrame()
 
         col_names = test_labels.columns
-        col_names = np.append(col_names, 'AVG')
+        if test_labels.shape[1]>1:
+            col_names = np.append(col_names, 'AVG')
 
         # R^2 error
         r2_err = r2_score(test_labels, predictions, multioutput = 'raw_values')
-        df_err = df_err.append(pd.Series(np.append(r2_err, np.mean(r2_err)), name = 'R^2 error'))
+        if test_labels.shape[1]>1:
+            df_err = df_err.append(pd.Series(np.append(r2_err, np.mean(r2_err)), name = 'R^2 error'))
+        else:
+            df_err = df_err.append(pd.Series(r2_err, name = 'R^2 error'))
 
         # MSE error:
         mse = mean_squared_error(test_labels, predictions, multioutput = 'raw_values')
-        df_err = df_err.append(pd.Series(np.append(mse, np.mean(mse)), name = 'MSE error'))
+        if test_labels.shape[1]>1:
+            df_err = df_err.append(pd.Series(np.append(mse, np.mean(mse)), name = 'MSE error'))
+        else:
+            df_err = df_err.append(pd.Series(mse, name = 'MSE error'))
 
         # MAE error:
         mae = mean_absolute_error(test_labels, predictions, multioutput = 'raw_values')
-        df_err = df_err.append(pd.Series(np.append(mae, np.mean(mae)), name = 'MAE error'))
+        if test_labels.shape[1]>1:
+            df_err = df_err.append(pd.Series(np.append(mae, np.mean(mae)), name = 'MAE error'))
+        else:
+            df_err = df_err.append(pd.Series(mae, name = 'MAE error'))
         
         # MAPE error:
-        y_true, y_pred = np.array(test_labels), np.array(predictions)
-        mape = np.mean(np.abs((y_true - y_pred) / y_true)) * 100
-        df_err = df_err.append(pd.Series(np.append(mape, np.mean(mape)), name = 'MAPE error'))
+        # y_true, y_pred = np.array(test_labels), np.array(predictions)
+        # mape = np.mean(np.abs((y_true - y_pred) / y_true)) * 100
+        # df_err = df_err.append(pd.Series(np.append(mape, np.mean(mape)), name = 'MAPE error'))
 
         # median absolute error (does not support multioutput on scikit-learn version is 0.20.1.):
         med_err = []
         if test_labels.shape[1]>1:
             for i in range(test_labels.shape[1]):
                 med_err = np.append(med_err, median_absolute_error(test_labels.iloc[:, i], predictions[:, i]))
+            df_err = df_err.append(pd.Series(np.append(med_err, np.mean(med_err)), name = 'Median Absolute error'))
         else:
             med_err = np.append(med_err, median_absolute_error(test_labels, predictions))
-
-        df_err = df_err.append(pd.Series(np.append(med_err, np.mean(med_err)), name = 'Median Absolute error'))
+            df_err = df_err.append(pd.Series(med_err, name = 'Median Absolute error'))
 
         df_err.columns = col_names
         

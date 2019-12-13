@@ -21,13 +21,13 @@ def cleanAndMergeData(df_listings, df_success_metrics, use_neigh = True):
         features_ensemble       = ['id','host_since', 'host_response_rate', 'host_is_superhost', 'host_total_listings_count', 
                             'host_verifications', 'host_has_profile_pic', 'host_identity_verified', 'neighbourhood_cleansed',
                             'property_type', 'room_type', 'bed_type', 'amenities', 'price', 'security_deposit', 'cleaning_fee',
-                            'guests_included', 'extra_people', 'minimum_nights', 'maximum_nights', 'number_of_reviews',
+                            'guests_included', 'extra_people', 'minimum_nights', 'maximum_nights',
                             'instant_bookable', 'cancellation_policy', 'dist_nearest_station']
     else:
         features_ensemble       = ['id','host_since', 'host_response_rate', 'host_is_superhost', 'host_total_listings_count', 
                             'host_verifications', 'host_has_profile_pic', 'host_identity_verified',
                             'property_type', 'room_type', 'bed_type', 'amenities', 'price', 'security_deposit', 'cleaning_fee',
-                            'guests_included', 'extra_people', 'minimum_nights', 'maximum_nights', 'number_of_reviews',
+                            'guests_included', 'extra_people', 'minimum_nights', 'maximum_nights',
                             'instant_bookable', 'cancellation_policy', 'dist_nearest_station']
     
     # features are seperated depending on their types to be prepared before being used for ML
@@ -94,7 +94,8 @@ def cleanAndMergeData(df_listings, df_success_metrics, use_neigh = True):
     ##############################################################
     ####################### clean df_metric ######################
     ##############################################################
-    df_metrics = cu.remove_by_threshold(df_success_metrics, 'reviews_per_month', 30)
+    if 'reviews_per_month' in df_success_metrics.columns.tolist():
+        df_metrics = cu.remove_by_threshold(df_success_metrics, 'reviews_per_month', 30)
     df_metrics = df_success_metrics.dropna(axis = 0)
 
     ##############################################################
