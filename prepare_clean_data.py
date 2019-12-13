@@ -3,8 +3,16 @@ from cleaning_utility import *
 def buildSuccessMetricsDf(df_listings, df_sentiment):
     df_success_metrics = pd.merge(df_listings[['id', 'review_scores_rating', 'reviews_per_month']].astype('float64'),
                   df_sentiment, left_on='id', right_on='listing_id')
+    
     # change index to id
-    df_success_metrics = df_success_metrics.set_index('id').drop('listing_id', axis = 1)
+    df_success_metrics = df_success_metrics.set_index('id')
+
+    # There are 2 ways to give the df_sentiment object as input:
+    # 1) take the output of analyze_comments (sentiment analysis) directly. In this case listing_id is the index and after merging only id is present (merge on indexes)
+    # 2) save the output of analyze_comments (sentiment analysis) to .csv. In this case the index listing_id can be saved as column (demending on the saving options).
+    #    In this case, after merging listing_id will be present as column since it is not an index. We delete it from the columns!
+    if 'listing_id' in df_success_metrics.columns.tolist():
+        df_success_metrics = df_success_metrics.drop('listing_id', axis = 1)
 
     return df_success_metrics
 

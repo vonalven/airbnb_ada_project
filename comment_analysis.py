@@ -63,10 +63,10 @@ def analyze_comments(comments):
 
     # remove all non-alphabetical characters to allow detect() to work
     regex = re.compile('[^A-Za-zÀ-ÿ]')      
-    comments['rm_comments'] = comments['comments'].swifter.apply(lambda x: regex.sub(' ', x))
+    comments['rm_comments'] = comments['comments'].swifter.progress_bar(enable=True, desc='Characters cleaning...').apply(lambda x: regex.sub(' ', x))
 
     # again, remove comments only filled with whitespaces
-    comments['isSpace'] = comments['rm_comments'].swifter.apply(lambda x: x.isspace())
+    comments['isSpace'] = comments['rm_comments'].swifter.progress_bar(enable=True, desc='Remove empty comments...').apply(lambda x: x.isspace())
     comments = comments[comments.isSpace == False]
     comments = comments.drop(columns=['isSpace'])
 
@@ -81,7 +81,7 @@ def analyze_comments(comments):
     
     # non-alphabetical characters are removed but the ponctuation in the comments is kept
     regex2 = re.compile('[^A-Za-zÀ-ÿ?!.,:;]')     
-    comments_en['ap_comments'] = comments_en['comments'].swifter.apply(lambda x: regex2.sub(' ', x))
+    comments_en['ap_comments'] = comments_en['comments'].swifter.progress_bar(enable=True, desc='Characters cleaning...').apply(lambda x: regex2.sub(' ', x))
     
     # remove unnecessary columns for next steps
     comments_en = comments_en.drop(columns=['comments', 'rm_comments', 'language'])

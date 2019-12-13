@@ -38,7 +38,7 @@ def dist_to_nearest_station(stations_coord, listing_coord):
     for listing in listing_coord:
         dist_tmp = []
         idx += 1
-        print('Running.... ' + str(np.ceil((idx/len(listing_coord))*100)) + '%', end='\r')
+        print('Running distances calculation.... ' + str(np.ceil((idx/len(listing_coord))*100)) + '%', end='\r')
         for station in stations_coord:
             dist_tmp.append(geodesic(station, listing).meters)
         
