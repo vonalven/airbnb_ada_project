@@ -22,13 +22,17 @@ def cleanAndMergeData(df_listings, df_success_metrics, use_neigh = True):
                             'host_verifications', 'host_has_profile_pic', 'host_identity_verified', 'neighbourhood_cleansed',
                             'property_type', 'room_type', 'bed_type', 'amenities', 'price', 'security_deposit', 'cleaning_fee',
                             'guests_included', 'extra_people', 'minimum_nights', 'maximum_nights',
-                            'instant_bookable', 'cancellation_policy', 'dist_nearest_station']
+                            'instant_bookable', 'cancellation_policy']
     else:
         features_ensemble       = ['id','host_since', 'host_response_rate', 'host_is_superhost', 'host_total_listings_count', 
                             'host_verifications', 'host_has_profile_pic', 'host_identity_verified',
                             'property_type', 'room_type', 'bed_type', 'amenities', 'price', 'security_deposit', 'cleaning_fee',
                             'guests_included', 'extra_people', 'minimum_nights', 'maximum_nights',
-                            'instant_bookable', 'cancellation_policy', 'dist_nearest_station']
+                            'instant_bookable', 'cancellation_policy']
+    
+    if 'dist_nearest_station' in df_listings.columns.tolist():
+        features_ensemble.append('dist_nearest_station')
+
     
     # features are seperated depending on their types to be prepared before being used for ML
     date_features           = 'host_since'
