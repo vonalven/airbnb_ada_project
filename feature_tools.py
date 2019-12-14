@@ -233,7 +233,8 @@ class FeaturesTools():
     
     
     def randomForestAnalysis(self, train_data = None, train_labels = None, test_data = None, test_labels = None, 
-                             seed = None, n_trees = 500, plotResults = [False, False, False, False], tuneModelParameters = False):
+                             seed = None, n_trees = 500, plotResults = [False, False, False, False], tuneModelParameters = False, 
+                             saveFigures = [False, False, False, False], saveTag = None, saveLocation = None):
         
         """performs a complete random forest analysis
         
@@ -262,6 +263,8 @@ class FeaturesTools():
         tuneModelparameters : bool
             if True, an optimization of the sklearn random forest model hyperparameters is performed and the best model is extracted.
             A grid search is performed
+        saveFigures : bool
+            if True, figures are saved.
         
 
         Returns:
@@ -316,6 +319,7 @@ class FeaturesTools():
             # Maximum number of levels in tree
             max_depth = [int(x) for x in np.linspace(1, 111, num = 20)]
             max_depth.append(None)
+            print(max_depth)
             # Minimum number of samples required to split a node
             min_samples_split = [2, 5, 10]
             # Minimum number of samples required at each leaf node
@@ -396,34 +400,44 @@ class FeaturesTools():
         df_err = pd.DataFrame()
 
         col_names = test_labels.columns
-        col_names = np.append(col_names, 'AVG')
+        if test_labels.shape[1]>1:
+            col_names = np.append(col_names, 'AVG')
 
         # R^2 error
         r2_err = r2_score(test_labels, predictions, multioutput = 'raw_values')
-        df_err = df_err.append(pd.Series(np.append(r2_err, np.mean(r2_err)), name = 'R^2 error'))
+        if test_labels.shape[1]>1:
+            df_err = df_err.append(pd.Series(np.append(r2_err, np.mean(r2_err)), name = 'R^2 error'))
+        else:
+            df_err = df_err.append(pd.Series(r2_err, name = 'R^2 error'))
 
         # MSE error:
         mse = mean_squared_error(test_labels, predictions, multioutput = 'raw_values')
-        df_err = df_err.append(pd.Series(np.append(mse, np.mean(mse)), name = 'MSE error'))
+        if test_labels.shape[1]>1:
+            df_err = df_err.append(pd.Series(np.append(mse, np.mean(mse)), name = 'MSE error'))
+        else:
+            df_err = df_err.append(pd.Series(mse, name = 'MSE error'))
 
         # MAE error:
         mae = mean_absolute_error(test_labels, predictions, multioutput = 'raw_values')
-        df_err = df_err.append(pd.Series(np.append(mae, np.mean(mae)), name = 'MAE error'))
+        if test_labels.shape[1]>1:
+            df_err = df_err.append(pd.Series(np.append(mae, np.mean(mae)), name = 'MAE error'))
+        else:
+            df_err = df_err.append(pd.Series(mae, name = 'MAE error'))
         
         # MAPE error:
-        y_true, y_pred = np.array(test_labels), np.array(predictions)
-        mape = np.mean(np.abs((y_true - y_pred) / y_true)) * 100
-        df_err = df_err.append(pd.Series(np.append(mape, np.mean(mape)), name = 'MAPE error'))
+        # y_true, y_pred = np.array(test_labels), np.array(predictions)
+        # mape = np.mean(np.abs((y_true - y_pred) / y_true)) * 100
+        # df_err = df_err.append(pd.Series(np.append(mape, np.mean(mape)), name = 'MAPE error'))
 
         # median absolute error (does not support multioutput on scikit-learn version is 0.20.1.):
         med_err = []
         if test_labels.shape[1]>1:
             for i in range(test_labels.shape[1]):
                 med_err = np.append(med_err, median_absolute_error(test_labels.iloc[:, i], predictions[:, i]))
+            df_err = df_err.append(pd.Series(np.append(med_err, np.mean(med_err)), name = 'Median Absolute error'))
         else:
             med_err = np.append(med_err, median_absolute_error(test_labels, predictions))
-
-        df_err = df_err.append(pd.Series(np.append(med_err, np.mean(med_err)), name = 'Median Absolute error'))
+            df_err = df_err.append(pd.Series(med_err, name = 'Median Absolute error'))
 
         df_err.columns = col_names
         
@@ -454,7 +468,7 @@ class FeaturesTools():
         print('\n> Performances comparison for the target(s) variables:\n')
         print(tabulate(df_err, headers='keys', tablefmt='psql', numalign = 'center', stralign = 'center'))
         
-        if plotResults[0]:
+        if plotResults[0] | saveFigures[0]:
             # error bars are so small that are not visible
             sns.barplot(x = 'feature_importance', y = 'feature', color='skyblue', data = df_importance, orient = 'h', ci = 'sd', capsize=.2)
             fig = plt.gcf()
@@ -463,9 +477,16 @@ class FeaturesTools():
             plt.ylabel('Features', size = 22)
             plt.title('Feature importance of each feature', size = 22)
             plt.tick_params(labelsize = 10)
-            plt.show()
+            if saveFigures[0] & ~plotResults[0]:
+                plt.savefig(saveLocation + '/' + saveTag + '_importance_bars.pdf', bbox_inches='tight')
+                plt.close(fig)
+            elif saveFigures[0] & plotResults[0]:
+                plt.savefig(saveLocation + '/' + saveTag + '_importance_bars.pdf', bbox_inches='tight')
+                plt.show()
+            else:
+                plt.show()
 
-        if plotResults[1]:
+        if plotResults[1] | saveFigures[1]:
             # plot Cumulative importance.
             x_values = np.arange(0, len(cumulative_importance))
             plt.plot(x_values, cumulative_importance, 'k-')
@@ -481,10 +502,17 @@ class FeaturesTools():
             plt.title('Cumulative importantce of the features', size = 22)
             plt.tick_params(labelsize = 10)
             plt.legend([l1], ['95% threshold'], loc = 'center right', fontsize = 20)
-            plt.show()
+            if saveFigures[1] & ~plotResults[1]:
+                plt.savefig(saveLocation + '/' + saveTag + '_cumulative_importance.pdf', bbox_inches='tight')
+                plt.close(fig)
+            elif saveFigures[1] & plotResults[1]:
+                plt.savefig(saveLocation + '/' + saveTag + '_cumulative_importance.pdf', bbox_inches='tight')
+                plt.show()
+            else:
+                plt.show()
 
-        if plotResults[2]:
-            # plot labels vs preictions
+        if plotResults[2] | saveFigures[2]:
+            # plot labels vs predictions
             fig = plt.figure(figsize = (20, 6))
             x_values = np.arange(0, len(predictions))
             for ff in range(test_labels.shape[1]):
@@ -500,8 +528,16 @@ class FeaturesTools():
                 plt.xlabel('Sample ID', size = 22)
                 plt.legend(fontsize = 20)
                 plt.tick_params(labelsize = 10)
+            if saveFigures[2] & ~plotResults[2]:
+                plt.savefig(saveLocation + '/' + saveTag + '_labels_vs_predictions.pdf', bbox_inches='tight')
+                plt.close(fig)
+            elif saveFigures[2] & plotResults[2]:
+                plt.savefig(saveLocation + '/' + saveTag + '_labels_vs_predictions.pdf', bbox_inches='tight')
+                plt.show()
+            else:
+                plt.show()
 
-        if plotResults[3]:
+        if plotResults[3] | saveFigures[3]:
             # visualize the tree
             export_graphviz(visual_tree, out_file = './RandomTree.dot', feature_names = train_data.columns, 
                 precision = 2, filled = True, rounded = True, max_depth = None)
@@ -587,7 +623,7 @@ class FeaturesTools():
         
         
       
-    def correlationAnalysis(self, df = None, method = 'pearson', plotMatrix = True, printMaxCorr = True):
+    def correlationAnalysis(self, df = None, method = 'pearson', plotMatrix = True, printTopCorrelated = True):
         """computes the correlation matrix of the input data
         
         Parameters:
@@ -598,7 +634,8 @@ class FeaturesTools():
             method used to compute correlation. Can be for example perason or sparman
         plotMatrix : bool
             if true, plot the lower half diagonal of the correlation matrix with an heatmap
-        printMaxCorr : bool
+        printTopCorrelated : bool
+            if true, print the maximally and minimally correlated features
 
         Returns:
         -----------
@@ -610,8 +647,11 @@ class FeaturesTools():
         
         if df is None:
             df = self.df
-            
-        corr = df.corr(method = 'pearson')
+        
+        # NANs can be computed from corr. NaN are present if 2 columns contain only one value (same columns, for example all zeros).
+        # The std will be 0. When the correlation coefficient is calculated, we divide by the standard deviation, which leads to a NA.
+        # Therefore, remove those columns/rows!
+        corr = df.corr(method = 'pearson').dropna(axis = 0, how = 'all').dropna(axis = 1, how = 'all')
 
         # Generate a mask for the upper triangle
         mask = np.zeros_like(corr, dtype=np.bool)
@@ -619,7 +659,7 @@ class FeaturesTools():
         
         if plotMatrix:
             #chart = sns.heatmap(corr, mask=mask, square=True, linewidths=.5, cbar_kws={"shrink": .5}, xticklabels=True, yticklabels=True)
-            chart = sns.heatmap(abs(corr), mask=mask, square=True, linewidths=.5, cbar_kws={"shrink": .5}, xticklabels=True, yticklabels=True)
+            chart = sns.heatmap(abs(corr), mask=mask, square=True, cbar_kws={"shrink": .5}, xticklabels=True, yticklabels=True, vmin=0, vmax=1)
             fig = plt.gcf()
             fig.set_size_inches(20, 20)
             plt.tick_params(labelsize=10)
@@ -630,6 +670,19 @@ class FeaturesTools():
             plt.title('Features correlation matrix - ' + method, fontsize = 22, \
                       fontweight='bold')
             plt.show()
+        
+        if printTopCorrelated:
+            s = corr.abs().unstack()
+            s = s.sort_values(kind="quicksort")
+            n_elements = corr.shape[0]
+            print('The 20 less correlated features are:')
+            print(s[1:20])
+
+            print('\nThe 20 most correlated features are:')
+            print(s.iloc[-(n_elements+20):-n_elements])
+
+            
+
         
         # print: variable... is max correlated with....
         #if printMaxCorr:
