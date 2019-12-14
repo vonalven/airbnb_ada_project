@@ -76,7 +76,7 @@ def analyze_comments(comments):
 
     # remove all non-alphabetical characters to allow detect() to work
     regex = re.compile('[^A-Za-zÀ-ÿ]')      
-    comments['rm_comments'] = comments['comments'].swifter.progress_bar(enable=True, desc='Characterscleaning...').apply(lambda x: regex.sub(' ', x))
+    comments['rm_comments'] = comments['comments'].swifter.progress_bar(enable=True, desc='Characters cleaning...').apply(lambda x: regex.sub(' ', x))
 
     # again, remove comments only filled with whitespaces
     comments['isSpace'] = comments['rm_comments'].swifter.progress_bar(enable=True, desc='Remove empty comments...').apply(lambda x: x.isspace())
@@ -84,7 +84,7 @@ def analyze_comments(comments):
     comments = comments.drop(columns=['isSpace'])
 
     # detect the language of each comment
-    comments['language'] = comments['rm_comments'].swifter.progress_bar(enable=True, desc='Languagedetection...').apply(lambda x: get_language(x))
+    comments['language'] = comments['rm_comments'].swifter.progress_bar(enable=True, desc='Language detection...').apply(lambda x: get_language(x))
     
     # drop comments with non-existing language
     comments.drop(comments['language'] == 'NaN', inplace=True)
