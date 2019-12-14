@@ -47,12 +47,25 @@ def get_sentiment(comment):
     
     return [mean_neg, mean_neu, mean_pos, mean_comp]
 
+def get_language(comment):
+    '''
+    takes a comment as an argument, computes its language, if not possible returns Nan
+    
+    '''
+    try:
+        language = detect(comment)
+    except:
+        language = 'NaN'
+        
+    return language
+
 
 def analyze_comments(comments):
     print('> Running parallelized analyze_comments...')
     start_time = time.time()
     
     print('This data contains', comments.shape[0], 'lines.')
+    
     
     # remove NaN
     comments = comments.dropna(how='any',axis=0)
@@ -64,7 +77,11 @@ def analyze_comments(comments):
 
     # remove all non-alphabetical characters to allow detect() to work
     regex = re.compile('[^A-Za-zÀ-ÿ]')      
+<<<<<<< HEAD
+    comments['rm_comments'] = comments['comments'].swifter.progress_bar(enable=True, desc='Characterscleaning...').apply(lambda x: regex.sub(' ', x))
+=======
     comments['rm_comments'] = comments['comments'].swifter.apply(lambda x: regex.sub(' ', x))
+>>>>>>> parent of 4deb528... Merge branch 'master' of https://github.com/vonalven/airbnb_ada_project
 
     # again, remove comments only filled with whitespaces
     comments['isSpace'] = comments['rm_comments'].swifter.apply(lambda x: x.isspace())
@@ -72,20 +89,29 @@ def analyze_comments(comments):
     comments = comments.drop(columns=['isSpace'])
 
     # detect the language of each comment
-    comments['language'] = comments['rm_comments'].swifter.progress_bar(enable=True, desc='Language detection...').apply(lambda x: detect(x))
+    comments['language'] = comments['rm_comments'].swifter.progress_bar(enable=True, desc='Languagedetection...').apply(lambda x: get_language(x))
     
+    # drop comments with non-existing language
+    comments.drop(comments['language'] == 'NaN', inplace=True)
+
     # as the previous step takes some time, the result is saved and can be loaded for further use
     comments.to_pickle("./comments_languages.pkl")
-    
+
     # keep only english comments
     comments_en = comments[comments.language == 'en']
-    
+
     # non-alphabetical characters are removed but the ponctuation in the comments is kept
     regex2 = re.compile('[^A-Za-zÀ-ÿ?!.,:;]')     
+<<<<<<< HEAD
+    comments_en['ap_comments'] = comments_en['comments'].swifter.progress_bar(enable=True, desc='Characters cleaning...').apply(lambda x: regex2.sub(' ', x))
+
+=======
     comments_en['ap_comments'] = comments_en['comments'].swifter.apply(lambda x: regex2.sub(' ', x))
     
+>>>>>>> parent of 4deb528... Merge branch 'master' of https://github.com/vonalven/airbnb_ada_project
     # remove unnecessary columns for next steps
     comments_en = comments_en.drop(columns=['comments', 'rm_comments', 'language'])
+        
     
     # get sentiment
     #ddata = dd['ap_comments'].from_pandas(comments_en, npartitions=16)
