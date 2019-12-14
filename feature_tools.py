@@ -319,6 +319,7 @@ class FeaturesTools():
             # Maximum number of levels in tree
             max_depth = [int(x) for x in np.linspace(1, 111, num = 20)]
             max_depth.append(None)
+            print(max_depth)
             # Minimum number of samples required to split a node
             min_samples_split = [2, 5, 10]
             # Minimum number of samples required at each leaf node
