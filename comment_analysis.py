@@ -54,7 +54,7 @@ def get_language(comment):
     try:
         language = detect(comment)
     except:
-        language = 'NaN'
+        language = np.nan
         
     return language
 
@@ -87,10 +87,10 @@ def analyze_comments(comments):
     comments['language'] = comments['rm_comments'].swifter.progress_bar(enable=True, desc='Language detection...').apply(lambda x: get_language(x))
     
     # drop comments with non-existing language
-    comments.drop(comments['language'] == 'NaN', inplace=True)
+    comments = comments.dropna()
 
     # as the previous step takes some time, the result is saved and can be loaded for further use
-    comments.to_pickle("./comments_languages.pkl")
+    # comments.to_pickle("./comments_languages.pkl")
 
     # keep only english comments
     comments_en = comments[comments.language == 'en']
