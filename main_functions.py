@@ -1,5 +1,9 @@
 import pickle
+import plotly.express as px
 from feature_tools import *
+from RBO.rankedlist import RBO
+import plotly.graph_objects as go
+from scipy.ndimage.measurements import label
 
 
 
@@ -191,4 +195,134 @@ def read_list(file_name, file_location):
     with open(file_location + '/' + file_name, 'rb') as fp:
         list_object = pickle.load(fp)
     return list_object
-   
+
+
+def pairwise_similarity_clustered(df_all_importances, first_n_ranks, success_metrics_list):
+    all_cities = df_all_importances.city.unique().tolist()
+    df_rbo_similarity_list = []
+    
+    if success_metrics_list == 'multi':
+        success_metrics_list = [success_metrics_list]
+        
+    for metric in success_metrics_list:
+        df_rbo_similarity = pd.DataFrame()
+        for current_city in all_cities:
+            current = df_all_importances.loc[df_all_importances.city == current_city]
+            if metric is not 'multi':
+                current = current.loc[current.metric == metric]
+            current = current.iloc[0:first_n_ranks, :]
+
+            rbo_scores_current = {current_city : 1.0}
+            for other_cities in [x for x in all_cities if x != current_city]:
+                df_other_city = df_all_importances.loc[df_all_importances.city == other_cities]
+                if metric is not 'multi':
+                    df_other_city = df_other_city.loc[df_other_city.metric == metric]
+                df_other_city = df_other_city.iloc[0:first_n_ranks, :]
+
+                rbo_score = RBO.score(current.feature_name.tolist(), df_other_city.feature_name.tolist())
+                rbo_scores_current.update({other_cities : rbo_score})
+
+                if rbo_score > 1:
+                    print('Error, an rbo score > 1 was computed!')
+
+            df_rbo_similarity = pd.concat([df_rbo_similarity, pd.DataFrame(rbo_scores_current, index = [current_city])], sort = False)
+
+        # reorder df_rbo_similarity to group clusters having similar rbo scores (for heatmap visualization)
+        # compute the indexes/columns permutation allowing to cluster the similarities
+        # but not show with clustermap because heatmap easier to control
+        cm = sns.clustermap(df_rbo_similarity, cbar_kws={"label": "RBO score"})
+        plt.close()
+        col_names = df_rbo_similarity.columns.tolist()
+        row_names = df_rbo_similarity.index.tolist()
+        order_row = cm.dendrogram_row.reordered_ind
+        order_col = cm.dendrogram_col.reordered_ind
+        order_row_labels = []
+        order_col_labels = []
+        for i, j in zip(order_row, order_col):
+            order_row_labels = order_row_labels + [row_names[i]]
+            order_col_labels = order_col_labels + [col_names[i]]
+
+        df_rbo_similarity = df_rbo_similarity.reindex(order_row_labels, axis = 0)
+        df_rbo_similarity = df_rbo_similarity.reindex(order_col_labels, axis = 'columns')
+        
+        df_rbo_similarity_list = df_rbo_similarity_list + [df_rbo_similarity]
+    
+    return df_rbo_similarity_list, success_metrics_list
+
+
+
+def get_merged_df_impotances(list_of_importance_df_files, files_location):
+    all_importance_df = pd.DataFrame()
+    idx_city = 0
+    for imp_file in list_of_importance_df_files:
+        df = pd.read_csv(files_location + '/' + imp_file).drop('Unnamed: 0', axis = 1)
+        df['city'] = [imp_file.split('_')[0]]*df.shape[0]
+        if 'feature' in df.columns.tolist():
+            df['feature_name'] = df.feature.apply(lambda x: 'neigborhood' if 'neigh' in x else x.replace('_', ' '))
+        all_importance_df = pd.concat([all_importance_df, df])
+        idx_city += 1
+    return all_importance_df
+
+def create_save_interactive_heatmap(df_heatmap, fig_saving_folder, save_tag):
+    fig = go.Figure(data = go.Heatmap(
+                       z = df_heatmap.values,
+                       x = df_heatmap.columns.tolist(),
+                       y = df_heatmap.index.tolist(),
+                       hoverongaps = False, colorscale = sns.color_palette('rocket', 20).as_hex()))
+    fig.update_xaxes(tickangle = -45)
+    fig.update_yaxes(autorange = 'reversed')
+    fig.update_layout(autosize = False, width = 800, height = 800)
+    # save html 
+    html_plot = pyplot(fig, filename = fig_saving_folder + '/' + save_tag + '.html', auto_open = False)
+    # don't show the figure
+    #fig.show()
+
+def plot_heat_map(df_heatmap, fig_saving_folder, fig_title, save_tag, use_diagonal_mask = True):
+    if use_diagonal_mask:
+        mask = np.zeros_like(df_heatmap, dtype = np.bool)
+        mask[np.triu_indices_from(mask)] = True
+    
+    fig = plt.gcf()
+    fig.set_size_inches(8, 7)
+    if use_diagonal_mask:
+        chart = sns.heatmap(df_heatmap, mask = mask, square=True, cbar_kws={"shrink": .5})
+    else:
+        chart = sns.heatmap(df_heatmap, square=True, cbar_kws={"shrink": .5})
+    chart.set_xticklabels(
+                chart.get_xticklabels(), 
+                rotation=45, 
+                horizontalalignment='right')
+    plt.title(fig_title, fontsize = 16, \
+                      fontweight='bold')
+    plt.savefig(fig_saving_folder + '/' + save_tag + '.pdf', bbox_inches='tight')    
+    plt.show()
+
+def matrix_treshold_binarization_preview(df_matrix, pixels_treshold):
+    binary_df = df_matrix.applymap(lambda x: 0 if x < pixels_treshold else 1)
+    sns.heatmap(binary_df)
+    plt.title('Binarized Matrix Preview', fontsize = 14, \
+                      fontweight='bold')
+    plt.show()
+    
+def extract_clusters_from_diag_blocks(df_matrix, block_pixels_treshold, min_block_elements):
+    '''
+    inspired from: https://stackoverflow.com/questions/46737409/finding-connected-components-in-a-pixel-array
+    '''
+    binary_df = df_matrix.applymap(lambda x: 0 if x < block_pixels_treshold else 1)
+    # define the 4-connected structure filter 
+    connections_filter = [[0, 1, 0], [1, 1, 1], [0, 1, 0]]
+    # label the 4-connected regions using scipy label function (applying morphological filter)
+    labeled, ncomponents = label(binary_df.values, connections_filter)
+    # extract the indices of the blocks
+    indices = np.indices(binary_df.values.shape).T[:,:,[1, 0]]
+    
+    clustered_elements = {}
+    for i in range(1, ncomponents+1):
+        # get indices of block (cluster) labeled with pixels values = i
+        indices_block_i = indices[labeled == i]
+        # if more than min_block_elements elements in block, get the elements in the block
+        if len(indices_block_i) >= min_block_elements:
+            unique_elements = np.unique(indices_block_i)
+            clustered_elements.update({'Cluster ' + str(i) : df_matrix.columns[unique_elements].tolist()}) 
+    
+    return clustered_elements

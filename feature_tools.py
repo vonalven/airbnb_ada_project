@@ -828,7 +828,37 @@ class FeaturesTools():
                 elif c == len(intervals) - 2 and i >= intervals[c]:
                     mapped_colors = np.append(mapped_colors, color_palette[c])
         return mapped_colors
+
+def create_save_interactive_heatmap(df_heatmap, fig_saving_folder, save_tag):
+    fig = go.Figure(data = go.Heatmap(
+                       z = df_heatmap.values,
+                       x = df_heatmap.columns.tolist(),
+                       y = df_heatmap.index.tolist(),
+                       hoverongaps = False, colorscale = sns.color_palette('rocket', 20).as_hex()))
+    fig.update_xaxes(tickangle = -45)
+    fig.update_yaxes(autorange = 'reversed')
+    fig.update_layout(autosize = False, width = 800, height = 800)
+    # save html 
+    html_plot = pyplot(fig, filename = fig_saving_folder + '/' + save_tag + '.html', auto_open = False)
+    # don't show the figure
+    #fig.show()
+
+def plot_heat_map(df_heatmap, fig_saving_folder, save_tag, use_diagonal_mask = True):
+    if use_diagonal_mask:
+        mask = np.zeros_like(df_heatmap, dtype = np.bool)
+        mask[np.triu_indices_from(mask)] = True
     
+    fig = plt.gcf()
+    fig.set_size_inches(8, 7)
+    chart = sns.heatmap(df_heatmap, mask = mask, square=True, cbar_kws={"shrink": .5})
+    chart.set_xticklabels(
+                chart.get_xticklabels(), 
+                rotation=45, 
+                horizontalalignment='right')
+    plt.title(metric, fontsize = 16, \
+                      fontweight='bold')
+    plt.savefig(fig_saving_folder + '/' + save_tag + '.pdf', bbox_inches='tight')    
+    plt.show()
 
 
         
