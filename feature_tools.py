@@ -730,7 +730,7 @@ class FeaturesTools():
         plt.show()
         
     
-    def interactive_sankey(self, df_contributions, figureTitle):
+    def interactive_sankey(self, df_contributions, figureTitle, savingDestination = '.', saveTag = 'sankey_plot', showFigure = True):
         """builds an interative sankey diagram from the input data
         
         Parameters:
@@ -784,10 +784,12 @@ class FeaturesTools():
 
         fig = go.Figure(data=[data_trace], layout=layout)
         
-        html_sankey = pyplot(fig, filename='sankey_plot.html', auto_open=False)
-        with open('sankey_plot.html', 'r') as f:
-            html = f.read()
-        fig.show()
+        save_name = savingDestination + '/' + saveTag + '.html'
+        html_sankey = pyplot(fig, filename = save_name, auto_open=False)
+        if showFigure:
+            with open(save_name, 'r') as f:
+                html = f.read()
+            fig.show()
     
     def map_to_color(self, color_palette, list_of_values, min_range = None, max_range = None):
         """map a list of values to discrete colors
@@ -829,36 +831,6 @@ class FeaturesTools():
                     mapped_colors = np.append(mapped_colors, color_palette[c])
         return mapped_colors
 
-def create_save_interactive_heatmap(df_heatmap, fig_saving_folder, save_tag):
-    fig = go.Figure(data = go.Heatmap(
-                       z = df_heatmap.values,
-                       x = df_heatmap.columns.tolist(),
-                       y = df_heatmap.index.tolist(),
-                       hoverongaps = False, colorscale = sns.color_palette('rocket', 20).as_hex()))
-    fig.update_xaxes(tickangle = -45)
-    fig.update_yaxes(autorange = 'reversed')
-    fig.update_layout(autosize = False, width = 800, height = 800)
-    # save html 
-    html_plot = pyplot(fig, filename = fig_saving_folder + '/' + save_tag + '.html', auto_open = False)
-    # don't show the figure
-    #fig.show()
-
-def plot_heat_map(df_heatmap, fig_saving_folder, save_tag, use_diagonal_mask = True):
-    if use_diagonal_mask:
-        mask = np.zeros_like(df_heatmap, dtype = np.bool)
-        mask[np.triu_indices_from(mask)] = True
-    
-    fig = plt.gcf()
-    fig.set_size_inches(8, 7)
-    chart = sns.heatmap(df_heatmap, mask = mask, square=True, cbar_kws={"shrink": .5})
-    chart.set_xticklabels(
-                chart.get_xticklabels(), 
-                rotation=45, 
-                horizontalalignment='right')
-    plt.title(metric, fontsize = 16, \
-                      fontweight='bold')
-    plt.savefig(fig_saving_folder + '/' + save_tag + '.pdf', bbox_inches='tight')    
-    plt.show()
 
 
         
