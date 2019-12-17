@@ -394,7 +394,7 @@ def create_save_bubble_plot(clustered_cities, importance_files_names, importance
     fig = px.scatter(df_clusters, x = 'cluster', y = 'feature_name',
 	                    size = 'ranking_inv', color = 'ranking_str',
                         hover_name = 'feature_name', size_max=35, 
-                        labels = {'feature_name':'feature name', 'ranking_str':'rank'},
+                        labels = {'feature_name':'feature name', 'ranking_str':'rank', 'ranking_inv':'bubble size'},
                         width = 800, category_orders = {'ranking_str':cat_order},
                         color_discrete_sequence = colors)
     '''
