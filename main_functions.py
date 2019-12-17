@@ -263,7 +263,7 @@ def get_merged_df_impotances(list_of_importance_df_files, files_location):
         idx_city += 1
     return all_importance_df
 
-def create_save_interactive_heatmap(df_heatmap, fig_saving_folder, save_tag):
+def create_save_interactive_heatmap(df_heatmap, fig_saving_folder, save_tag, showFigure = False):
     fig = go.Figure(data = go.Heatmap(
                        z = df_heatmap.values,
                        x = df_heatmap.columns.tolist(),
@@ -274,8 +274,9 @@ def create_save_interactive_heatmap(df_heatmap, fig_saving_folder, save_tag):
     fig.update_layout(autosize = False, width = 800, height = 800)
     # save html 
     html_plot = pyplot(fig, filename = fig_saving_folder + '/' + save_tag + '.html', auto_open = False)
-    # don't show the figure
-    #fig.show()
+
+    if showFigure:
+        fig.show()
 
 def plot_heat_map(df_heatmap, fig_saving_folder, fig_title, save_tag, use_diagonal_mask = True):
     if use_diagonal_mask:
@@ -329,7 +330,7 @@ def extract_clusters_from_diag_blocks(df_matrix, block_pixels_treshold, min_bloc
 
 
 def create_save_radial_plot(clustered_cities, importance_files_names, importance_files_identifier, 
-        files_location, fig_saving_folder, first_n_ranks, save_tag, metric = 'multi'):
+        files_location, fig_saving_folder, first_n_ranks, save_tag, metric = 'multi', showFigure = False):
     df_clusters = pd.DataFrame()
     for cluster in clustered_cities.items():
         # since features importances in the clusters are very similar, take the ranking for the first city in the cluster
@@ -353,10 +354,56 @@ def create_save_radial_plot(clustered_cities, importance_files_names, importance
     # fig = px.line_polar(df_clusters, r = 'ranking', theta='feature_name', color = 'cluster', line_close = True,
     #                    color_discrete_sequence = colors,
     #                    range_r = range_radius)
-    fig = px.scatter_polar(df_clusters, r = 'ranking', theta='feature_name', color = 'cluster',
+    fig = px.scatter_polar(df_clusters, r = 'ranking', theta = 'feature_name', color = 'cluster',
                         size = 'ranking', color_discrete_sequence = colors,
                         range_r = range_radius)
     # save html
     html_plot = pyplot(fig, filename = fig_saving_folder + '/' + save_tag + '.html', auto_open = False)
-    # don't show the figure
-    fig.show()
+
+    if showFigure:
+        fig.show()
+
+    
+def create_save_bubble_plot(clustered_cities, importance_files_names, importance_files_identifier, 
+        files_location, fig_saving_folder, first_n_ranks, save_tag, metric = 'multi', showFigure = False):
+    df_clusters = pd.DataFrame()
+    for cluster in clustered_cities.items():
+        # since features importances in the clusters are very similar, take the ranking for the first city in the cluster
+        cluster_cities = cluster[1]
+        city           = cluster_cities[0]
+        file_city_imp  = [x for x in importance_files_names if (city in x and importance_files_identifier in x)]
+        if len(file_city_imp) > 1:
+            print('Error!')
+        tmp_imp_df = pd.read_csv(files_location + '/' + file_city_imp[0])
+        if metric is not 'multi':
+            tmp_imp_df = tmp_imp_df.loc[tmp_imp_df.metric == metric]
+
+        tmp_imp_df = tmp_imp_df.iloc[0:first_n_ranks, :]
+        tmp_imp_df['ranking']      = np.arange(1, first_n_ranks+1)
+        tmp_imp_df['ranking_inv']  = np.arange(1, first_n_ranks+1)[::-1]
+        tmp_imp_df['ranking_str']  = [str(x) for x in np.arange(1, first_n_ranks+1)]
+        tmp_imp_df['cluster']      = cluster[0]
+        tmp_imp_df['feature_name'] = tmp_imp_df.feature.apply(lambda x: 'neigborhood' if 'neigh' in x else x.replace('_', ' '))
+        df_clusters = pd.concat([df_clusters, tmp_imp_df])
+
+    colors = sns.color_palette('hls', first_n_ranks).as_hex()
+    range_radius = [first_n_ranks, 1]
+    #display(df_clusters)
+    cat_order = [str(x) for x in np.arange(1, first_n_ranks+1)]
+    
+    fig = px.scatter(df_clusters, x = 'cluster', y = 'feature_name',
+	                    size = 'ranking_inv', color = 'ranking_str',
+                        hover_name = 'feature_name', size_max=35, 
+                        labels = {'feature_name':'feature name', 'ranking_str':'rank'},
+                        width = 800, category_orders = {'ranking_str':cat_order},
+                        color_discrete_sequence = colors)
+    '''
+    fig = px.scatter_polar(df_clusters, r = 'ranking', theta='feature_name', color = 'cluster',
+                        size = 'ranking', color_discrete_sequence = colors,
+                        range_r = range_radius)
+    '''
+    # save html
+    html_plot = pyplot(fig, filename = fig_saving_folder + '/' + save_tag + '.html', auto_open = False)
+
+    if showFigure:
+        fig.show()
