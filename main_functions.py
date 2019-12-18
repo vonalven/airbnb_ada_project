@@ -3,8 +3,8 @@ import plotly.express as px
 from feature_tools import *
 from RBO.rankedlist import RBO
 import plotly.graph_objects as go
+from PIL import Image, ImageFont, ImageDraw
 from scipy.ndimage.measurements import label
-
 
 
 def perform_rf_simple(df_full, df_success_metrics, metric, random_seed, tune = False, plot_res = [True, True, False, False],
@@ -407,3 +407,49 @@ def create_save_bubble_plot(clustered_cities, importance_files_names, importance
 
     if showFigure:
         fig.show()
+
+def cities_clusters_to_images_rows(cluster_dict, list_of_img_file_names, images_location, horizontal_padding, vertical_padding, text_size, text_font, saving_location, save_tag, show_result_img = True):
+    text_font_formatted = ImageFont.truetype('/Library/Fonts/'+text_font+'.ttf', size = text_size)
+
+    for cluster in cluster_dict.items():
+        cluster_name          = cluster[0]
+        cluster_cities        = cluster[1]
+        cluster_cities_images = []
+
+        for city in cluster_cities:
+            cluster_cities_images += [i for i in list_of_img_file_names if city in i]
+
+        cluster_cities_images = [images_location + '/' + i for i in cluster_cities_images]
+        images_cities         = [Image.open(x) for x in cluster_cities_images]
+        widths, heights       = zip(*(i.size for i in images_cities))
+        max_width             = max(widths)
+        max_height            = max(heights)
+        total_width           = sum(widths) + (len(cluster_cities_images) - 1)*horizontal_padding + 2*horizontal_padding
+        total_height          = max(heights) + vertical_padding
+        new_im   = Image.new('RGB', (total_width, total_height), color = (255, 255, 255))
+
+        # concatenate images adding white space padding
+        x_offset = horizontal_padding
+        for im in images_cities:
+          new_im.paste(im, (x_offset,0))
+          x_offset += im.size[0] + horizontal_padding
+
+        # add text (city names)
+        d = ImageDraw.Draw(new_im)
+        counter  = 0
+        y_offset = np.round(vertical_padding/2)
+        for city_name in cluster_cities:
+            # center text in the middle of each image
+            w, h       = d.textsize(city_name, font = text_font_formatted)
+            x_position = horizontal_padding + counter * max_width + counter * horizontal_padding + np.round((max_width-w)/2)
+            y_position = max_height + np.round((vertical_padding-h)/2)
+            location   = (x_position, y_position)
+            d.text(location, city_name, font = text_font_formatted, fill = (0, 0, 0))
+            counter += 1
+
+        save_name = saving_location + '/' + save_tag + '_concatenated_cities_images_' + cluster_name + '.jpg'
+        new_im.save(save_name)
+        
+        if show_result_img:
+            img = Image.open(save_name)
+            img.show()
