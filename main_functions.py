@@ -271,7 +271,7 @@ def create_save_interactive_heatmap(df_heatmap, fig_saving_folder, save_tag, sho
                        hoverongaps = False, colorscale = sns.color_palette('rocket', 20).as_hex()))
     fig.update_xaxes(tickangle = -45)
     fig.update_yaxes(autorange = 'reversed')
-    fig.update_layout(autosize = False, width = 800, height = 800)
+    fig.update_layout(autosize = True, width = 800, height = 800)
     # save html 
     html_plot = pyplot(fig, filename = fig_saving_folder + '/' + save_tag + '.html', auto_open = False)
 

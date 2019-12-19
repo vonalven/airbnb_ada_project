@@ -783,6 +783,7 @@ class FeaturesTools():
         )
 
         fig = go.Figure(data=[data_trace], layout=layout)
+        fig.update_layout(autosize = True)
         
         save_name = savingDestination + '/' + saveTag + '.html'
         html_sankey = pyplot(fig, filename = save_name, auto_open=False)
