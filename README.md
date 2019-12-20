@@ -3,8 +3,6 @@
 ![](./img/airbnb-part-de-marche-paris.jpg)
 (Image retrieved from: https://pagtour.info/on-evoque-souvent-airbnb-mais-rarement-les-problemes-des-clients/)
 
-# Installations
-
 # Run the projet
 
 # Organisation of the repository
@@ -13,13 +11,13 @@
 to find the best model parameters and finally the analysis of the whole dataset.
 +---Notebooks
 |
-| DataSet_Download.ipynb                                     >
-| GetCommentAnalysis.ipynb                                 >
-| MapClass.ipynb                               			    >
-| MapMovies.ipynb                                		    >
-| NLP_Metrics.ipynb                                 		    >
-| NearestStation_simple.ipynb                                >
-| comentsAnalysis.ipynb                                 	    >
+| airbnb_DataSet_Download.ipynb                         >  Notebook to dowload the data set from insideairbnb.com
+| GetCommentAnalysis.ipynb                                 >  This notebook allows to get the complete analysis of comments data from a given city's Airbnbs
+| MapClass.ipynb                               			    > This notebook allows to easily handle and create folium maps
+| MapMovies.ipynb                                		    > This notebook does animated folium maps
+| NLP_Metrics.ipynb                                 		    > This notebook generates NLP (natural language processing) metrics: positivity, negativity and compound.
+| NearestStation_simple.ipynb                                > In this notebook, the code to calculate the distance to the nearest stations is tested on the Amsterdam listings
+| comentsAnalysis.ipynb                                 	    > In this notebook, comments data set of Amsterdam listings is explored, cleaned. Then the sentiment of each comment is computed.
 | dist_to_station.ipynb                                 	    >
 | success_metrics_exploration.ipynb                      >
 |
@@ -29,21 +27,50 @@ to find the best model parameters and finally the analysis of the whole dataset.
 |
 +---html_files
 |
-| Airbnb_world_map.html 					   > Produced world map showing the cities from the data set in the globe.
-| *citiyname* _sankey_plot_threshol=0.01.html     > Produced sankey plot showing features importance for each success metric for the specified city
-| coumpound_importance_clusters_ *type of plot* .html > Plots showing features importance for the compound metrics. The types of plots are polar plot or bubble plot.
-| review_per_month_importance_clusters_ *type of plot* .html  > Plots showing features importance for the review_per_month metrics. The types of plots are polar plot or bubble plot.
-| review_score_rating_importance_clusters_ *type of plot*.html  > Plots showing features importance for the review_score_ratings metrics. The types of plots are polar plot or bubble plot.
-| multi_target_rating_importance_clusters_ *type of plot*.html  > Plots showing features importance for the all three metrics simultaneously (multi-target analysis). The types of plots are polar plot or bubble plot.
-| compound_importances_ranking_similarity_interactive.html > Heatmap showing city clusters based on similarity in terms of features importance for the compound metric.
+| Airbnb_world_map.html 					   				> Produced world map showing the cities from the data set in the globe.
+| CITYNAME_sankey_plot_threshol=0.01.html    				> Produced sankey plot showing features importance for each success metric for the specified city
+| coumpound_importance_clusters_ TYPEOFPLOT .html			> Plots showing features importance for the compound metrics. The types of plots are polar plot or bubble plot.
+|
+| review_per_month_importance_clusters_TYPEOFPLOT .html 	> Plots showing features importance for the review_per_month metrics. The types of plots are polar plot or bubble plot.
+|
+| review_score_rating_importance_clusters_TYPEOFPLOT.html 	> Plots showing features importance for the review_score_ratings metrics. The types of plots are polar plot or bubble plot.
+|
+| multi_target_rating_importance_clusters_TYPEOFPLOT.html   	> Plots showing features importance for the all three metrics simultaneously (multi-target analysis). The types of plots are polar plot or bubble plot.
+|
+| compound_importances_ranking_similarity_interactive.html 		> Heatmap showing city clusters based on similarity in terms of features importance for the compound metric.
+|
 | review_per_month_importances_ranking_similarity_interactive.html > Heatmap showing city clusters based on similarity in terms of features importance for the review_per_month metric.
+|
 | review_score_rating_importances_ranking_similarity_interactive.html > Heatmap showing city clusters based on similarity in terms of features importance for the review_score_rating metric.
+|
 | multi_target_rating_importances_ranking_similarity_interactive.html > Heatmap showing city clusters based on similarity in terms of features importance for all three metrics simultaneously (multi-target analysis).
 |
 +---jpg_files
 |
 | Contains all the produced results in JPEG format
 |
++---jpg_files
+|
+| A COMPLETER
+|
++---src
+|
+| cleaning_utility.py				>  Class defining tools to clean the airbnb data set
+|
+| comment_analysis.py			> Contains all the functions necessary to perform comment analysis of the airbnb reviews
+|
+| feature_tools.py				> Class defining tools allowing to run ML analysis on the features contained in a data set and to generate some graphic outputs
+| 
+| hidden_print.py				> Class to hide the print of some code sections
+|
+| main_functions.py				> Contains the functions called in the main for the whole analysis
+|
+| prepare_clean_data.py			> Contains all the functions necessary to clean the datasets
+|
+| stations.py					> Contains the function to use the public transport dataset to get their localization and compute distances from stations to listing
+|
+| stations_distance_utilities.py		> Contains functions to calculate distances from stations to listing
+
 ```  
 
 
