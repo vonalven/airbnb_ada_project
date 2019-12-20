@@ -1,4 +1,4 @@
-# What makes an Airbnb successful?
+# WHAT MAKES AN AIRBNB SUCCESSFUL ?
 
 The Data Story can be found [here](https://vonalven.github.io).
 
@@ -101,7 +101,6 @@ All the data is downloaded as .csv files and handled using pandas.
 |   stations_distance_utilities.py                  > contains functions to compute station distances
 |   
 +---RBO                                             > files to compute similarities for clustering + Rank Biased Overlap                            
-|
 |
 ```  
 
