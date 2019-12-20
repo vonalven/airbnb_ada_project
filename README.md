@@ -1,8 +1,5 @@
 # What makes an Airbnb successful?
 
-![](./img/airbnb-part-de-marche-paris.jpg)
-(Image retrieved from: https://pagtour.info/on-evoque-souvent-airbnb-mais-rarement-les-problemes-des-clients/)
-
 LINK TO THE DATASTORY: https://vonalven.github.io/
 
 # Run the projet
