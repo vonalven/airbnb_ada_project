@@ -778,12 +778,16 @@ class FeaturesTools():
             title = figureTitle,
             height = 1000,
             font = dict(
-              size = 10
+            size = 10
             ),    
         )
 
         fig = go.Figure(data=[data_trace], layout=layout)
-        fig.update_layout(autosize = True)
+        fig.update_layout(autosize = True, title={
+                'y':0.95,
+                'x':0.5,
+                'xanchor': 'center',
+                'yanchor': 'top'})
         
         save_name = savingDestination + '/' + saveTag + '.html'
         html_sankey = pyplot(fig, filename = save_name, auto_open=False)
