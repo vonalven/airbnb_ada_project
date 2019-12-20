@@ -63,44 +63,44 @@ All the data is downloaded as .csv files and handled using pandas.
 
 ```
 |
-|   README.md                                                               > README of the project  
-|   main.ipynb                                                              > performs the entire analysis
+|   README.md                                       > README of the project  
+|   main.ipynb                                      > performs the entire analysis
 |   
 +---img
 |
-|   +---cities_pictures_jpg                                                 > JPEG format pictures of cities 			                              
+|   +---cities_pictures_jpg                         > JPEG format pictures of cities 			                              
 |  
-|   +---html_files                                                          > generated plots and heatmaps 
+|   +---html_files                                  > generated plots and heatmaps 
 |
-|   +---jpg_files                                                           > Contains all the produced results in JPEG format
+|   +---jpg_files                                   > Contains all the produced results in JPEG format
 |
-|   +---pdf_files                                                           > PDF version of generated heatmaps 
+|   +---pdf_files                                   > PDF version of generated heatmaps 
 |
 +---notebooks
 |
-|   GetCommentAnalysis.ipynb                                                > allows sentiment analysis of comments
-|   MapClass.ipynb                                                          > allows to easily handle and create folium maps
-|   MapMovies.ipynb                                                         > allows to create animated folium maps
-|   NLP_Metrics.ipynb                                                       > generates NLP metric of sentiment analysis
-|   NearestStation_simple.ipynb                                             > allows to compute the distance to stations
-|   Transport_Download.ipynb                                                > allows to download transports dataset
-|   airbnb_DataSet_Download.ipynb                                           > allows to dowload dataset from insideairbnb.com
-|   comentsAnalysis.ipyb                                                    > contains sentiment analysis of comments
-|   dist_to_station.ipynb                                                   > exploration of the public transports dataset
-|   success_metrics_exploration.ipynb                                       > Exploratory analysis of the Amsterdam dataset
+|   GetCommentAnalysis.ipynb                        > allows sentiment analysis of comments
+|   MapClass.ipynb                                  > allows to easily handle and create folium maps
+|   MapMovies.ipynb                                 > allows to create animated folium maps
+|   NLP_Metrics.ipynb                               > generates NLP metric of sentiment analysis
+|   NearestStation_simple.ipynb                     > allows to compute the distance to stations
+|   Transport_Download.ipynb                        > allows to download transports dataset
+|   airbnb_DataSet_Download.ipynb                   > allows to dowload dataset from insideairbnb.com
+|   comentsAnalysis.ipyb                            > contains sentiment analysis of comments
+|   dist_to_station.ipynb                           > exploration of the public transports dataset
+|   success_metrics_exploration.ipynb               > Exploratory analysis of the Amsterdam dataset
 |
 +---src
 |
-|   cleaning_utility.py                                                     > class defining tools to clean airbnb dataset
-|   comment_analysis.py                                                     > contains functionsto perform comment analysis
-|   feature_tools.py                                                        > class defining tools allowing ML + related plots 
-|   hidden_print.py                                                         > class to hide the print of some code sections
-|   main_functions.py                                                       > contains functions for complete analysis in main
-|   prepare_clean_data.py                                                   > contains functions to clean the datasets
-|   stations.py                                                             > contains the function to use the public 
-|   stations_distance_utilities.py                                          > contains functions to compute station distances
+|   cleaning_utility.py                             > class defining tools to clean airbnb dataset
+|   comment_analysis.py                             > contains functionsto perform comment analysis
+|   feature_tools.py                                > class defining tools allowing ML + related plots 
+|   hidden_print.py                                 > class to hide the print of some code sections
+|   main_functions.py                               > contains functions for complete analysis in main
+|   prepare_clean_data.py                           > contains functions to clean the datasets
+|   stations.py                                     > contains the function to use the public 
+|   stations_distance_utilities.py                  > contains functions to compute station distances
 |   
-+---RBO                                                                     > files to compute similarities for clustering +  |                                                                             to compute the Rank Biased Overlab (RB0)
++---RBO                                             > files to compute similarities for clustering + Rank Biased Overlap                            
 |
 |
 ```  
@@ -117,5 +117,5 @@ All the data is downloaded as .csv files and handled using pandas.
 
 # Team's investment
 
-Everyone has contributed equally to the project. Even though tasks were distributed among the team mates for efficiency, every aspect was studied by every student.
+Everyone has contributed equally to the project, even though tasks were distributed among the team mates for efficiency purposes. 
 
