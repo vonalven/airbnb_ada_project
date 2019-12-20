@@ -271,7 +271,7 @@ def create_save_interactive_heatmap(df_heatmap, fig_saving_folder, save_tag, sho
                        hoverongaps = False, colorscale = sns.color_palette('rocket', 20).as_hex()))
     fig.update_xaxes(tickangle = -45)
     fig.update_yaxes(autorange = 'reversed')
-    fig.update_layout(autosize = True, width = 800, height = 800)
+    fig.update_layout(autosize = True)
     # save html 
     html_plot = pyplot(fig, filename = fig_saving_folder + '/' + save_tag + '.html', auto_open = False)
 
@@ -357,6 +357,7 @@ def create_save_radial_plot(clustered_cities, importance_files_names, importance
     fig = px.scatter_polar(df_clusters, r = 'ranking', theta = 'feature_name', color = 'cluster',
                         size = 'ranking', color_discrete_sequence = colors,
                         range_r = range_radius)
+    fig.update_layout(autosize = True)
     # save html
     html_plot = pyplot(fig, filename = fig_saving_folder + '/' + save_tag + '.html', auto_open = False)
 
@@ -402,6 +403,7 @@ def create_save_bubble_plot(clustered_cities, importance_files_names, importance
                         size = 'ranking', color_discrete_sequence = colors,
                         range_r = range_radius)
     '''
+    fig.update_layout(autosize = True)
     # save html
     html_plot = pyplot(fig, filename = fig_saving_folder + '/' + save_tag + '.html', auto_open = False)
 
@@ -453,3 +455,42 @@ def cities_clusters_to_images_rows(cluster_dict, list_of_img_file_names, images_
         if show_result_img:
             img = Image.open(save_name)
             img.show()
+
+def merge_single_cluster_imgs(cluster_figures_location, figures_tags, horizontal_padding, text_size, text_font, vert_spacing, saving_location, show_result_img = True):
+    all_clusters_jpg = os.listdir(cluster_figures_location) 
+
+    text_font_formatted = ImageFont.truetype('/Library/Fonts/'+text_font+'.ttf', size = text_size)
+
+    for tag in figures_tags:
+        files_tag = [i for i in all_clusters_jpg if tag in i]
+        files_tag = [cluster_figures_location + '/' + i for i in files_tag]
+        clusters_imgs   = [Image.open(x) for x in files_tag]
+        widths, heights = zip(*(i.size for i in clusters_imgs))
+        widths  = list(widths)
+        heights = list(heights)
+        # sort images from the widest to the narrowest
+        sorted_files_tag = [x for _,x in sorted(zip(widths, files_tag))][::-1]
+        clusters_imgs         = [Image.open(x) for x in sorted_files_tag]
+        new_im   = Image.new('RGB', (max(widths) + horizontal_padding, sum(heights)), color = (255, 255, 255))
+        y_offset = 0
+        for img, height in zip(clusters_imgs, heights):
+            new_im.paste(img, (horizontal_padding, y_offset))
+            y_offset += height
+
+        # add cluster label on the left border
+        d = ImageDraw.Draw(new_im)
+        counter  = 0
+        for cluster_jpg_files, height in zip(sorted_files_tag, heights):
+            cluster_name = cluster_jpg_files.split('_')[-1].split('.')[-2]
+            # center text in the middle of each image
+            w, h       = d.textsize(cluster_name, font = text_font_formatted)
+            x_position = np.round((horizontal_padding-w)/2)
+            y_position = np.round((height-h)/2) + counter * height - (vert_spacing-np.round(h/2))
+            location   = (x_position, y_position)
+            d.text(location, cluster_name, font = text_font_formatted, fill = (0, 0, 0))
+            counter += 1
+        
+        save_name = saving_location + '/' + tag + '_merged_cluster_imgs_' + cluster_name + '.jpg'
+        new_im.save(save_name)
+        if show_result_img:
+            new_im.show()
