@@ -3,6 +3,53 @@
 ![](./img/airbnb-part-de-marche-paris.jpg)
 (Image retrieved from: https://pagtour.info/on-evoque-souvent-airbnb-mais-rarement-les-problemes-des-clients/)
 
+# Installations
+
+# Run the projet
+
+# Organisation of the repository
+
+|   main.ipynb                                    > performs the entire analysis, starting from data exploration to single city study
+to find the best model parameters and finally the analysis of the whole dataset.
++---Notebooks
+|
+| DataSet_Download.ipynb                                     >
+| GetCommentAnalysis.ipynb                                 >
+| MapClass.ipynb                               			    >
+| MapMovies.ipynb                                		    >
+| NLP_Metrics.ipynb                                 		    >
+| NearestStation_simple.ipynb                                >
+| comentsAnalysis.ipynb                                 	    >
+| dist_to_station.ipynb                                 	    >
+| success_metrics_exploration.ipynb                      >
+|
++---cities_pictures_jpg
+|
+| *cityname* .jpg							 > JPEG format pictures of cities commun to both datasets to vizualise the clusters of cities
+|
++---html_files
+|
+| Airbnb_world_map.html 					   > Produced world map showing the cities from the data set in the globe.
+| *citiyname* _sankey_plot_threshol=0.01.html     > Produced sankey plot showing features importance for each success metric for the specified city
+| coumpound_importance_clusters_ *type of plot* .html > Plots showing features importance for the compound metrics. The types of plots are polar plot or bubble plot.
+| review_per_month_importance_clusters_ *type of plot* .html  > Plots showing features importance for the review_per_month metrics. The types of plots are polar plot or bubble plot.
+| review_score_rating_importance_clusters_ *type of plot*.html  > Plots showing features importance for the review_score_ratings metrics. The types of plots are polar plot or bubble plot.
+| multi_target_rating_importance_clusters_ *type of plot*.html  > Plots showing features importance for the all three metrics simultaneously (multi-target analysis). The types of plots are polar plot or bubble plot.
+| compound_importances_ranking_similarity_interactive.html > Heatmap showing city clusters based on similarity in terms of features importance for the compound metric.
+| review_per_month_importances_ranking_similarity_interactive.html > Heatmap showing city clusters based on similarity in terms of features importance for the review_per_month metric.
+| review_score_rating_importances_ranking_similarity_interactive.html > Heatmap showing city clusters based on similarity in terms of features importance for the review_score_rating metric.
+| multi_target_rating_importances_ranking_similarity_interactive.html > Heatmap showing city clusters based on similarity in terms of features importance for all three metrics simultaneously (multi-target analysis).
+|
++---jpg_files
+|
+| Contains all the produced results in JPEG format
+|
+
+
+
+
+
+
 # Milestone 2 Remark:
 For this milestone, the submitted notebook that has to be evaluated is named "main.ipynb"
 /!\ For visualization purposes, the main.ipynb notebook should be opened with JupyterLab /!\
