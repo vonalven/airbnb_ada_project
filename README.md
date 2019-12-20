@@ -5,12 +5,24 @@
 
 # Run the projet
 
+Run the main.ipynb jupyter notebook.
+
 # Organisation of the repository
 ```  
 |   main.ipynb                                    > performs the entire analysis, starting from data exploration to single city study
 to find the best model parameters and finally the analysis of the whole dataset.
 +---Notebooks
 |
+<<<<<<< HEAD
+| 	airbnb_DataSet_Download.ipynb				>  Notebook to dowload the data set from insideairbnb.com
+| 	GetCommentAnalysis.ipynb				>  This notebook allows to get the complete analysis of comments data from a given city's Airbnbs
+|	 MapClass.ipynb 					> This notebook allows to easily handle and create folium maps
+| 	MapMovies.ipynb						> This notebook does animated folium maps
+|	 NLP_Metrics.ipynb					> This notebook generates NLP (natural language processing) metrics: positivity, negativity and compound.
+|	 NearestStation_simple.ipynb				> In this notebook, the code to calculate the distance to the nearest stations is tested on the Amsterdam listings
+|	 comentsAnalysis.ipynb					> In this notebook, comments data set of Amsterdam listings is explored, cleaned. Then the sentiment of each comment is computed.
+| 	dist_to_station.ipynb					> Exploratory analysis of the public transport data set
+=======
 | 	airbnb_DataSet_Download.ipynb			>  Notebook to dowload the data set from insideairbnb.com
 | 	GetCommentAnalysis.ipynb				>  This notebook allows to get the complete analysis of comments data from a given city's Airbnbs
 |	 MapClass.ipynb 						> This notebook allows to easily handle and create folium maps
@@ -19,6 +31,7 @@ to find the best model parameters and finally the analysis of the whole dataset.
 |	 NearestStation_simple.ipynb				> In this notebook, the code to calculate the distance to the nearest stations is tested on the Amsterdam listings
 |	 comentsAnalysis.ipynb					> In this notebook, comments data set of Amsterdam listings is explored, cleaned. Then the sentiment of each comment is computed.
 | 	dist_to_station.ipynb						> Exploratory analysis of the public transport data set
+>>>>>>> 70dd8346ae5f8daedbab9b1824f1c1efd2007191
 | 	success_metrics_exploration.ipynb			> Exploratory analysis of the Amsterdam dataset to find out what could be used to define success -> the success metrics.
 |
 +---cities_pictures_jpg
@@ -39,19 +52,34 @@ to find the best model parameters and finally the analysis of the whole dataset.
 |
 | 	compound_importances_ranking_similarity_interactive.html	> Heatmap showing city clusters based on similarity in terms of features importance for the compound metric.
 |
+<<<<<<< HEAD
+| 	review_per_month_importances_ranking_similarity_interactive.html 	> Heatmap showing city clusters based on similarity in terms of features importance for the review_per_month metric.
+|
+| 	review_score_rating_importances_ranking_similarity_interactive.html	> Heatmap showing city clusters based on similarity in terms of features importance for the review_score_rating metric.
+|
+| 	multi_target_rating_importances_ranking_similarity_interactive.html	> Heatmap showing city clusters based on similarity in terms of features importance for all three metrics simultaneously (multi-target analysis).
+=======
 | 	review_per_month_importances_ranking_similarity_interactive.html 		> Heatmap showing city clusters based on similarity in terms of features importance for the review_per_month metric.
 |
 | 	review_score_rating_importances_ranking_similarity_interactive.html	> Heatmap showing city clusters based on similarity in terms of features importance for the review_score_rating metric.
 |
 | 	multi_target_rating_importances_ranking_similarity_interactive.html		> Heatmap showing city clusters based on similarity in terms of features importance for all three metrics simultaneously (multi-target analysis).
+>>>>>>> 70dd8346ae5f8daedbab9b1824f1c1efd2007191
 |
 +---jpg_files
 |
 |	 Contains all the produced results in JPEG format
+<<<<<<< HEAD
+|
++--pdf_files
+|
+| 	PDF version of heatmaps generated during analysis to save some memory space
+=======
 |
 +---jpg_files
 |
 | A COMPLETER
+>>>>>>> 70dd8346ae5f8daedbab9b1824f1c1efd2007191
 |
 +---src
 |
@@ -70,11 +98,15 @@ to find the best model parameters and finally the analysis of the whole dataset.
 | 	stations.py					> Contains the function to use the public transport dataset to get their localization and compute distances from stations to listing
 |
 | 	stations_distance_utilities.py		> Contains functions to calculate distances from stations to listing
+<<<<<<< HEAD
+=======
 
 ```  
 
 
+>>>>>>> 70dd8346ae5f8daedbab9b1824f1c1efd2007191
 
+```  
 
 
 # Milestone 2 Remark:
