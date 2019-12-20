@@ -1,12 +1,12 @@
 # What makes an Airbnb successful?
 
-LINK TO THE DATASTORY: https://vonalven.github.io/
+The datastory can be found [here](https://vonalven.github.io).
 
 # Run the projet
 
-Run the [main.ipynb](https://github.com/vonalven/airbnb_ada_project/blob/master/main.ipynb) jupyter notebook 
+Run the file [main.ipynb](https://github.com/vonalven/airbnb_ada_project/blob/master/main.ipynb). 
     
-*For visualization purposes, this notebook should be opened with JupyterLab*
+*For visualization purposes, this notebook should be opened with JupyterLab.*
 
 
 # Abstract
@@ -64,59 +64,43 @@ All the data is downloaded as .csv files and handled using pandas.
 ```
 |
 |   README.md                                                               > README of the project  
-|   main.ipynb                                                              > performs the entire analysis, starting from data exploration to single city study
+|   main.ipynb                                                              > performs the entire analysis
 |   
 +---img
 |
-|   +---cities_pictures_jpg  
-| 
-| 	    *cityname* .jpg							                            > JPEG format pictures of cities commun to both datasets to vizualise the clusters of   |                                                                             cities
+|   +---cities_pictures_jpg                                                 > JPEG format pictures of cities 			                              
 |  
-|   +---html_files 
-|
-| 	    Airbnb_world_map.html					                            > Produced world map showing the cities from the data set in the globe.
-| 	    CITYNAME_sankey_plot_threshol=0.01.html	                            > Produced sankey plot showing features importance for each success metric for the      |                                                                             city
-| 	    coumpound_importance_clusters_ TYPEOFPLOT.html		                > Plots showing features importance for the compound metrics. The types of plots are    |                                                                             polar plot or bubble plot.
-| 	    review_per_month_importance_clusters_TYPEOFPLOT.html	            > Plots showing features importance for the review_per_month metrics. The types of      |                                                                             plots are polar plot or bubble plot.
-| 	    review_score_rating_importance_clusters_TYPEOFPLOT.html	            > Plots showing features importance for the review_score_ratings metrics. The types of  |                                                                             plots are polar plot or bubble plot.
-| 	    multi_target_rating_importance_clusters_TYPEOFPLOT.html	            > Plots showing features importance for the all three metrics simultaneously            |                                                                             (multi-target analysis). The types of plots are polar plot or bubble plot.
-| 	    compound_importances_ranking_similarity_interactive.html	        > Heatmap showing city clusters based on similarity in terms of features importance for |                                                                             the compound metric.
-| 	    review_per_month_importances_ranking_similarity_interactive.html 	> Heatmap showing city clusters based on similarity in terms of features importance for |                                                                             the review_per_month metric.
-| 	    review_score_rating_importances_ranking_similarity_interactive.html	> Heatmap showing city clusters based on similarity in terms of features importance for |                                                                             the review_score_rating metric.
-| 	    multi_target_rating_importances_ranking_similarity_interactive.html	> Heatmap showing city clusters based on similarity in terms of features importance for |                                                                             all three metrics simultaneously (multi-target analysis).
-| 	    review_per_month_importances_ranking_similarity_interactive.html    > Heatmap showing city clusters based on similarity in terms of features importance for |                                                                            the review_per_month metric.
-| 	    review_score_rating_importances_ranking_similarity_interactive.html	> Heatmap showing city clusters based on similarity in terms of features importance for |                                                                             the review_score_rating metric.
-| 	    multi_target_rating_importances_ranking_similarity_interactive.html	> Heatmap showing city clusters based on similarity in terms of features importance for |                                                                             all three metrics simultaneously (multi-target analysis).
-|
+|   +---html_files                                                          > generated plots and heatmaps 
 |
 |   +---jpg_files                                                           > Contains all the produced results in JPEG format
 |
-|   +---pdf_files                                                           > PDF version of heatmaps generated during analysis to save some memory space
+|   +---pdf_files                                                           > PDF version of generated heatmaps 
 |
 +---notebooks
 |
-|   GetCommentAnalysis.ipynb				                                > This notebook allows to get the complete analysis of comments data from a given       |                                                                             city's Airbnbs
-|   MapClass.ipynb 					                                        > This notebook allows to easily handle and create folium maps
-| 	MapMovies.ipynb						                                    > This notebook does animated folium maps
-|	NLP_Metrics.ipynb					                                    > This notebook generates NLP (natural language processing) metrics: positivity,        |                                                                             negativity and compound.
-|	NearestStation_simple.ipynb				                                > In this notebook, the code to calculate the distance to the nearest stations is       |                                                                             tested on the Amsterdam listings
-|   Transport_Download.ipynb                                                > This notebook allows to download transports dataset
-| 	airbnb_DataSet_Download.ipynb				                            > Notebook to dowload the data set from insideairbnb.com
-|   comentsAnalysis.ipynb					                                > In this notebook, comments data set of Amsterdam listings is explored, cleaned. Then  |                                                                             the sentiment of each comment is computed.
-| 	dist_to_station.ipynb						                            > Exploratory analysis of the public transport data set
-| 	success_metrics_exploration.ipynb			                            > Exploratory analysis of the Amsterdam dataset to find out what could be used to       |                                                                             define success -> the success metrics.
+|   GetCommentAnalysis.ipynb				                                > allows sentiment analysis of comments
+|   MapClass.ipynb 					                                        > allows to easily handle and create folium maps
+| 	MapMovies.ipynb						                                    > allows to create animated folium maps
+|	NLP_Metrics.ipynb					                                    > generates NLP metric of sentiment analysis
+|	NearestStation_simple.ipynb				                                > allows to compute the distance to stations
+|   Transport_Download.ipynb                                                > allows to download transports dataset
+| 	airbnb_DataSet_Download.ipynb				                            > allows to dowload dataset from insideairbnb.com
+|   comentsAnalysis.ipynb					                                > contains sentiment analysis of comments
+| 	dist_to_station.ipynb						                            > exploration of the public transports dataset
+| 	success_metrics_exploration.ipynb			                            > Exploratory analysis of the Amsterdam dataset
+|
 +---src
 |
-| 	cleaning_utility.py				                                        > Class defining tools to clean the airbnb data set
-| 	comment_analysis.py			                                            > Contains all the functions necessary to perform comment analysis of the airbnb reviews
-| 	feature_tools.py 				                                        > Class defining tools allowing to run ML analysis on the features contained in a data  |                                                                             set and to generate some graphic outputs
-| 	hidden_print.py					                                        > Class to hide the print of some code sections
-| 	main_functions.py				                                        > Contains the functions called in the main for the whole analysis
-| 	prepare_clean_data.py			                                        > Contains all the functions necessary to clean the datasets
-| 	stations.py					                                            > Contains the function to use the public transport dataset to get their localization   |                                                                             and compute distances from stations to listing
-| 	stations_distance_utilities.py		                                    > Contains functions to calculate distances from stations to listing
+| 	cleaning_utility.py				                                        > class defining tools to clean airbnb dataset
+| 	comment_analysis.py			                                            > contains functionsto perform comment analysis
+| 	feature_tools.py 				                                        > class defining tools allowing ML + related plots 
+| 	hidden_print.py					                                        > class to hide the print of some code sections
+| 	main_functions.py				                                        > contains functions for complete analysis in main
+| 	prepare_clean_data.py			                                        > contains functions to clean the datasets
+| 	stations.py					                                            > contains the function to use the public 
+| 	stations_distance_utilities.py		                                    > contains functions to compute station distances
 |   
-+---RBO                                                                     > folder containing files to compute similarities for clustering + to compute the Rank  |                                                                             Biased Overlab (RB0)
++---RBO                                                                     > files to compute similarities for clustering +  |                                                                             to compute the Rank Biased Overlab (RB0)
 |
 |
 ```  
