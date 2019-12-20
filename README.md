@@ -8,7 +8,7 @@
 # Run the projet
 
 # Organisation of the repository
-
+```  
 |   main.ipynb                                    > performs the entire analysis, starting from data exploration to single city study
 to find the best model parameters and finally the analysis of the whole dataset.
 +---Notebooks
@@ -44,7 +44,7 @@ to find the best model parameters and finally the analysis of the whole dataset.
 |
 | Contains all the produced results in JPEG format
 |
-
+```  
 
 
 
