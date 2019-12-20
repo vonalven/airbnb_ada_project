@@ -1,6 +1,6 @@
 # What makes an Airbnb successful?
 
-The datastory can be found [here](https://vonalven.github.io).
+The Data Story can be found [here](https://vonalven.github.io).
 
 # Run the projet
 
@@ -78,27 +78,27 @@ All the data is downloaded as .csv files and handled using pandas.
 |
 +---notebooks
 |
-|   GetCommentAnalysis.ipynb				                                > allows sentiment analysis of comments
-|   MapClass.ipynb 					                                        > allows to easily handle and create folium maps
-| 	MapMovies.ipynb						                                    > allows to create animated folium maps
-|	NLP_Metrics.ipynb					                                    > generates NLP metric of sentiment analysis
-|	NearestStation_simple.ipynb				                                > allows to compute the distance to stations
+|   GetCommentAnalysis.ipynb                                                > allows sentiment analysis of comments
+|   MapClass.ipynb                                                          > allows to easily handle and create folium maps
+| 	MapMovies.ipynb                                                         > allows to create animated folium maps
+|	NLP_Metrics.ipynb                                                       > generates NLP metric of sentiment analysis
+|	NearestStation_simple.ipynb                                             > allows to compute the distance to stations
 |   Transport_Download.ipynb                                                > allows to download transports dataset
-| 	airbnb_DataSet_Download.ipynb				                            > allows to dowload dataset from insideairbnb.com
-|   comentsAnalysis.ipynb					                                > contains sentiment analysis of comments
-| 	dist_to_station.ipynb						                            > exploration of the public transports dataset
-| 	success_metrics_exploration.ipynb			                            > Exploratory analysis of the Amsterdam dataset
+| 	airbnb_DataSet_Download.ipynb                                           > allows to dowload dataset from insideairbnb.com
+|   comentsAnalysis.ipyb                                                    > contains sentiment analysis of comments
+| 	dist_to_station.ipynb                                                   > exploration of the public transports dataset
+| 	success_metrics_exploration.ipynb                                       > Exploratory analysis of the Amsterdam dataset
 |
 +---src
 |
-| 	cleaning_utility.py				                                        > class defining tools to clean airbnb dataset
-| 	comment_analysis.py			                                            > contains functionsto perform comment analysis
-| 	feature_tools.py 				                                        > class defining tools allowing ML + related plots 
-| 	hidden_print.py					                                        > class to hide the print of some code sections
-| 	main_functions.py				                                        > contains functions for complete analysis in main
-| 	prepare_clean_data.py			                                        > contains functions to clean the datasets
-| 	stations.py					                                            > contains the function to use the public 
-| 	stations_distance_utilities.py		                                    > contains functions to compute station distances
+| 	cleaning_utility.py                                                     > class defining tools to clean airbnb dataset
+| 	comment_analysis.py                                                     > contains functionsto perform comment analysis
+| 	feature_tools.py                                                        > class defining tools allowing ML + related plots 
+| 	hidden_print.py                                                         > class to hide the print of some code sections
+| 	main_functions.py                                                       > contains functions for complete analysis in main
+| 	prepare_clean_data.py                                                   > contains functions to clean the datasets
+| 	stations.py                                                             > contains the function to use the public 
+| 	stations_distance_utilities.py                                          > contains functions to compute station distances
 |   
 +---RBO                                                                     > files to compute similarities for clustering +  |                                                                             to compute the Rank Biased Overlab (RB0)
 |
