@@ -186,18 +186,35 @@ def extract_from_all_datasets(target_hosts_ids, target_hosts_names, data_locatio
 
 
 def save_list(save_name, save_destination, list_object):
+    '''
+    Save a list object as .txt file to a specific location with a specific name
+    '''
+
     with open(save_destination + '/' + save_name + '.txt', 'wb') as fp: 
            pickle.dump(list_object, fp)
 
 
 
 def read_list(file_name, file_location):
+    '''
+    Read a list saved as .txt located in a specific folder
+    '''
+
     with open(file_location + '/' + file_name, 'rb') as fp:
         list_object = pickle.load(fp)
     return list_object
 
 
 def pairwise_similarity_clustered(df_all_importances, first_n_ranks, success_metrics_list):
+    '''
+    Compute the RBO similarity between lists of features importances. For further informations about the RBO method and 
+    implementation, see the project notebook!
+
+    Only the first n ranks (first_n_ranks) of the lists are retained for comparison. In our case, only the first n most important features.
+    Returns a pairwise matrix ordered by euclidean distance with the same method used to create dendrograms from a pairwise
+    matrix.
+    '''
+
     all_cities = df_all_importances.city.unique().tolist()
     df_rbo_similarity_list = []
     
@@ -252,6 +269,11 @@ def pairwise_similarity_clustered(df_all_importances, first_n_ranks, success_met
 
 
 def get_merged_df_impotances(list_of_importance_df_files, files_location):
+    '''
+    Simply open and merge a list of dataframes containing the importance data of the features )located in files_location)
+    into an unique dataframe that will be used for other analyses.
+    '''
+
     all_importance_df = pd.DataFrame()
     idx_city = 0
     for imp_file in list_of_importance_df_files:
@@ -264,6 +286,11 @@ def get_merged_df_impotances(list_of_importance_df_files, files_location):
     return all_importance_df
 
 def create_save_interactive_heatmap(df_heatmap, fig_saving_folder, save_tag, showFigure = False):
+    '''
+    From a df representing a pairwise similarity matrix, create an interactive heatmap pyplot representation and save it
+    as html. This will be integrated in an Iframe in the html.
+    '''
+
     fig = go.Figure(data = go.Heatmap(
                        z = df_heatmap.values,
                        x = df_heatmap.columns.tolist(),
@@ -279,6 +306,11 @@ def create_save_interactive_heatmap(df_heatmap, fig_saving_folder, save_tag, sho
         fig.show()
 
 def plot_heat_map(df_heatmap, fig_saving_folder, fig_title, save_tag, use_diagonal_mask = True):
+    '''
+    From a df representing a pairwise similarity matrix, create an interactive heatmap matplotlib representation and save it
+    as pdf. This will be integrated and shown in the main notebook.
+    '''
+
     if use_diagonal_mask:
         mask = np.zeros_like(df_heatmap, dtype = np.bool)
         mask[np.triu_indices_from(mask)] = True
@@ -299,6 +331,11 @@ def plot_heat_map(df_heatmap, fig_saving_folder, fig_title, save_tag, use_diagon
     plt.show()
 
 def matrix_treshold_binarization_preview(df_matrix, pixels_treshold):
+    '''
+    Visualize the treshold-binarization of a df representing a pairwise similarity matrix. To help in the selection
+    of the right treshold!
+    '''
+
     binary_df = df_matrix.applymap(lambda x: 0 if x < pixels_treshold else 1)
     sns.heatmap(binary_df)
     plt.title('Binarized Matrix Preview', fontsize = 14, \
@@ -307,8 +344,14 @@ def matrix_treshold_binarization_preview(df_matrix, pixels_treshold):
     
 def extract_clusters_from_diag_blocks(df_matrix, block_pixels_treshold, min_block_elements):
     '''
+    Using treshold-binarization and matematical morphology, extract from a df representing a pairwise similarity matrix
+    the 4-connected (pixels) clusters. For further info, see the main notebook.
+    Retain only clusters having a minimal number of elements, defined by min_block_elements.
+    Returns a dictionaire with the structure: {Cluster1:[element1, element2, ...], Cluster2:[...]}
+
     inspired from: https://stackoverflow.com/questions/46737409/finding-connected-components-in-a-pixel-array
     '''
+
     binary_df = df_matrix.applymap(lambda x: 0 if x < block_pixels_treshold else 1)
     # define the 4-connected structure filter 
     connections_filter = [[0, 1, 0], [1, 1, 1], [0, 1, 0]]
@@ -331,6 +374,10 @@ def extract_clusters_from_diag_blocks(df_matrix, block_pixels_treshold, min_bloc
 
 def create_save_radial_plot(clustered_cities, importance_files_names, importance_files_identifier, 
         files_location, fig_saving_folder, first_n_ranks, save_tag, metric = 'multi', showFigure = False):
+    '''
+    Create and save an interactive plotly radar plot to display the ranking of the features in clusters.
+    '''
+
     df_clusters = pd.DataFrame()
     for cluster in clustered_cities.items():
         # since features importances in the clusters are very similar, take the ranking for the first city in the cluster
@@ -367,6 +414,10 @@ def create_save_radial_plot(clustered_cities, importance_files_names, importance
     
 def create_save_bubble_plot(clustered_cities, importance_files_names, importance_files_identifier, 
         files_location, fig_saving_folder, first_n_ranks, save_tag, metric = 'multi', showFigure = False):
+    '''
+    Create and save an interactive plotly bubble scatter plot to display the ranking of the features in clusters.
+    '''
+    
     df_clusters = pd.DataFrame()
     for cluster in clustered_cities.items():
         # since features importances in the clusters are very similar, take the ranking for the first city in the cluster
@@ -398,11 +449,7 @@ def create_save_bubble_plot(clustered_cities, importance_files_names, importance
                         labels = {'feature_name':'feature name', 'ranking_str':'rank', 'ranking_inv':'bubble size'},
                         width = 800, category_orders = {'ranking_str':cat_order},
                         color_discrete_sequence = colors)
-    '''
-    fig = px.scatter_polar(df_clusters, r = 'ranking', theta='feature_name', color = 'cluster',
-                        size = 'ranking', color_discrete_sequence = colors,
-                        range_r = range_radius)
-    '''
+
     fig.update_layout(autosize = True)
     # save html
     html_plot = pyplot(fig, filename = fig_saving_folder + '/' + save_tag + '.html', auto_open = False)
@@ -411,6 +458,10 @@ def create_save_bubble_plot(clustered_cities, importance_files_names, importance
         fig.show()
 
 def cities_clusters_to_images_rows(cluster_dict, list_of_img_file_names, images_location, horizontal_padding, vertical_padding, text_size, text_font, saving_location, save_tag, show_result_img = True):
+    '''
+    Concatenate a list of images to a row-representation. This will allow us to visualize all the cities in a cluster.
+    '''
+
     text_font_formatted = ImageFont.truetype('/Library/Fonts/'+text_font+'.ttf', size = text_size)
 
     for cluster in cluster_dict.items():
@@ -457,6 +508,11 @@ def cities_clusters_to_images_rows(cluster_dict, list_of_img_file_names, images_
             img.show()
 
 def merge_single_cluster_imgs(cluster_figures_location, figures_tags, horizontal_padding, text_size, text_font, vert_spacing, saving_location, show_result_img = True):
+    '''
+    Concatenate the row-representations generated by cities_clusters_to_images_rows vertically to obtain an unique image with all the clusters.
+    Concatenate from the widest row (on top) to the narrowest (on bottom)
+    '''
+
     all_clusters_jpg = os.listdir(cluster_figures_location) 
 
     text_font_formatted = ImageFont.truetype('/Library/Fonts/'+text_font+'.ttf', size = text_size)
