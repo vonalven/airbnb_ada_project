@@ -19,8 +19,8 @@ description:
   The platform makes it seem easy to rent your listing. However, you may have to pay 
   attention to a few details if you plan to grow a business out of it. Dive in to discover
   how to strategically make profit with the platfrom.
-baseurl: "/airbnb_ada_project/docs" # the subpath of your site, e.g. /blog
-url: "https://vonalven.github.io/"
+baseurl: "/" # the subpath of your site, e.g. /blog
+url: "https://vonalven.github.io/airbnb_ada_project/"
 github_username:  vonalven
 
 # Build settings
