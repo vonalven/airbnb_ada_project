@@ -1,0 +1,173 @@
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        .dropbtn {
+            background-color: #9bb7d4;
+            color: white;
+            padding: 16px;
+            font-size: 16px;
+            border: none;
+        }
+        
+        .scrollable-menu {
+        	height: auto;
+            max-height: 200px;
+            overflow-x: hidden;
+        }
+
+        .dropdown {
+            position: relative;
+            display: inline-block;
+        }
+
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            background-color: #f1f1f1;
+            min-width: 160px;
+            box-shadow: 0px 0.6px 0.6px 0px rgba(0, 0, 0, 0.2);
+            z-index: 1;
+        }
+
+        .dropdown-content a {
+            color: black;
+            padding: 0.6px 0.6px;
+            text-decoration: none;
+            display: block;
+        }
+
+        .dropdown-content a:hover {
+            background-color: #ddd;
+        }
+
+        .dropdown:hover .dropdown-content {
+            display: block;
+        }
+
+        .dropdown:hover .dropbtn {
+            background-color: #9bb7d4;
+        }
+    </style>
+
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css"
+          integrity="sha384-HSMxcRTRxnN+Bdg0JdbxYKrThecOKuH5zCYotlSAcp1+c8xmyTe9GYg1l9a69psu" crossorigin="anonymous">
+
+</head>
+<body>
+
+
+<div class="row">
+    <div class="col-md-6 imgChanger">
+    
+        <div class="dropdown">
+            <button class="dropbtn">City</button>
+            <div class="dropdown-content" onChange="jsDropDown(img_to_display, this.value + 'jpg')">
+                <a href="javascript:void(0)" data-img="Amsterdam_sankey_plot_treshold=0.035.html">Amsterdam</a>
+                <a href="javascript:void(0)" data-img="Barcelona_sankey_plot_treshold=0.035.html">Barcelona</a>
+                <a href="javascript:void(0)" data-img="Beijing_sankey_plot_treshold=0.035.html">Beijing</a>
+                <a href="javascript:void(0)" data-img="Berlin_sankey_plot_treshold=0.035.html">Berlin</a>
+                <a href="javascript:void(0)" data-img="Bordeaux_sankey_plot_treshold=0.035.html">Bordeaux</a>
+                <a href="javascript:void(0)" data-img="Boston_sankey_plot_treshold=0.035.html">Boston</a>
+                <a href="javascript:void(0)" data-img="Brussels_sankey_plot_treshold=0.035.html">Brussels</a>
+                <a href="javascript:void(0)" data-img="Buenos Aires_sankey_plot_treshold=0.035.html">Buenos Aires</a>
+                <a href="javascript:void(0)" data-img="Chicago_sankey_plot_treshold=0.035.html">Chicago</a>
+				<a href="javascript:void(0)" data-img="Hong Kong_sankey_plot_treshold=0.035.html">Hong Kong</a>
+				<a href="javascript:void(0)" data-img="Istanbul_sankey_plot_treshold=0.035.html">Istanbul</a>
+				<a href="javascript:void(0)" data-img="Lisbon_sankey_plot_treshold=0.035.html">Lisbon</a>
+				<a href="javascript:void(0)" data-img="London_sankey_plot_treshold=0.035.html">London</a>
+				<a href="javascript:void(0)" data-img="Los Angeles_sankey_plot_treshold=0.035.html">Los Angeles</a>
+				<a href="javascript:void(0)" data-img="Madrid_sankey_plot_treshold=0.035.html">Madrid</a>
+				<a href="javascript:void(0)" data-img="Manchester_sankey_plot_treshold=0.035.html">Manchester</a>
+				<a href="javascript:void(0)" data-img="Melbourne_sankey_plot_treshold=0.035.html">Melbourne</a>
+				<a href="javascript:void(0)" data-img="Milan_sankey_plot_treshold=0.035.html">Milan</a>
+				<a href="javascript:void(0)" data-img="Montreal_sankey_plot_treshold=0.035.html">Montreal</a>
+				<a href="javascript:void(0)" data-img="Munich_sankey_plot_treshold=0.035.html">Munich</a>
+				<a href="javascript:void(0)" data-img="Naples_sankey_plot_treshold=0.035.html">Naples</a>
+				<a href="javascript:void(0)" data-img="New York City_sankey_plot_treshold=0.035.html">New York City</a>
+				<a href="javascript:void(0)" data-img="Ottawa_sankey_plot_treshold=0.035.html">Ottawa</a>
+				<a href="javascript:void(0)" data-img="Paris_sankey_plot_treshold=0.035.html">Paris</a>
+				<a href="javascript:void(0)" data-img="Rio de Janeiro_sankey_plot_treshold=0.035.html">Rio de Janeiro</a>
+				<a href="javascript:void(0)" data-img="Rome_sankey_plot_treshold=0.035.html">Rome</a>
+				<a href="javascript:void(0)" data-img="Singapore_sankey_plot_treshold=0.035.html">Singapore</a>
+				<a href="javascript:void(0)" data-img="Stockholm_sankey_plot_treshold=0.035.html">Stockholm</a>
+				<a href="javascript:void(0)" data-img="Sydney_sankey_plot_treshold=0.035.html">Sydney</a>
+				<a href="javascript:void(0)" data-img="Tokyo_sankey_plot_treshold=0.035.html">Tokyo</a>
+				<a href="javascript:void(0)" data-img="Toronto_sankey_plot_treshold=0.035.html">Toronto</a>
+                <a href="javascript:void(0)" data-img="Valencia_sankey_plot_treshold=0.035.html">Valencia</a>
+                <a href="javascript:void(0)" data-img="Venice_sankey_plot_treshold=0.035.html">Venice</a>
+                <a href="javascript:void(0)" data-img="Vienna_sankey_plot_treshold=0.035.html">Vienna</a>
+            </div>
+        </div>
+
+
+        <iframe src="./html_graphs/Amsterdam_sankey_plot_treshold=0.035.html"
+                style="border: none; overflow: hidden; width: 100%; height: 620px;"></iframe>
+
+
+    </div>
+    <div class="col-md-6 imgChanger">
+
+        <div class="dropdown">
+            <button class="dropbtn">City</button>
+            <div class="dropdown-content" onChange="jsDropDown(img_to_display, this.value + 'jpg')">
+               <a href="javascript:void(0)" data-img="Amsterdam_sankey_plot_treshold=0.035.html">Amsterdam</a>
+                <a href="javascript:void(0)" data-img="Barcelona_sankey_plot_treshold=0.035.html">Barcelona</a>
+                <a href="javascript:void(0)" data-img="Beijing_sankey_plot_treshold=0.035.html">Beijing</a>
+                <a href="javascript:void(0)" data-img="Berlin_sankey_plot_treshold=0.035.html">Berlin</a>
+                <a href="javascript:void(0)" data-img="Bordeaux_sankey_plot_treshold=0.035.html">Bordeaux</a>
+                <a href="javascript:void(0)" data-img="Boston_sankey_plot_treshold=0.035.html">Boston</a>
+                <a href="javascript:void(0)" data-img="Brussels_sankey_plot_treshold=0.035.html">Brussels</a>
+                <a href="javascript:void(0)" data-img="Buenos Aires_sankey_plot_treshold=0.035.html">Buenos Aires</a>
+                <a href="javascript:void(0)" data-img="Chicago_sankey_plot_treshold=0.035.html">Chicago</a>
+				<a href="javascript:void(0)" data-img="Hong Kong_sankey_plot_treshold=0.035.html">Hong Kong</a>
+				<a href="javascript:void(0)" data-img="Istanbul_sankey_plot_treshold=0.035.html">Istanbul</a>
+				<a href="javascript:void(0)" data-img="Lisbon_sankey_plot_treshold=0.035.html">Lisbon</a>
+				<a href="javascript:void(0)" data-img="London_sankey_plot_treshold=0.035.html">London</a>
+				<a href="javascript:void(0)" data-img="Los Angeles_sankey_plot_treshold=0.035.html">Los Angeles</a>
+				<a href="javascript:void(0)" data-img="Madrid_sankey_plot_treshold=0.035.html">Madrid</a>
+				<a href="javascript:void(0)" data-img="Manchester_sankey_plot_treshold=0.035.html">Manchester</a>
+				<a href="javascript:void(0)" data-img="Melbourne_sankey_plot_treshold=0.035.html">Melbourne</a>
+				<a href="javascript:void(0)" data-img="Milan_sankey_plot_treshold=0.035.html">Milan</a>
+				<a href="javascript:void(0)" data-img="Montreal_sankey_plot_treshold=0.035.html">Montreal</a>
+				<a href="javascript:void(0)" data-img="Munich_sankey_plot_treshold=0.035.html">Munich</a>
+				<a href="javascript:void(0)" data-img="Naples_sankey_plot_treshold=0.035.html">Naples</a>
+				<a href="javascript:void(0)" data-img="New York City_sankey_plot_treshold=0.035.html">New York City</a>
+				<a href="javascript:void(0)" data-img="Ottawa_sankey_plot_treshold=0.035.html">Ottawa</a>
+				<a href="javascript:void(0)" data-img="Paris_sankey_plot_treshold=0.035.html">Paris</a>
+				<a href="javascript:void(0)" data-img="Rio de Janeiro_sankey_plot_treshold=0.035.html">Rio de Janeiro</a>
+				<a href="javascript:void(0)" data-img="Rome_sankey_plot_treshold=0.035.html">Rome</a>
+				<a href="javascript:void(0)" data-img="Singapore_sankey_plot_treshold=0.035.html">Singapore</a>
+				<a href="javascript:void(0)" data-img="Stockholm_sankey_plot_treshold=0.035.html">Stockholm</a>
+				<a href="javascript:void(0)" data-img="Sydney_sankey_plot_treshold=0.035.html">Sydney</a>
+				<a href="javascript:void(0)" data-img="Tokyo_sankey_plot_treshold=0.035.html">Tokyo</a>
+				<a href="javascript:void(0)" data-img="Toronto_sankey_plot_treshold=0.035.html">Toronto</a>
+                <a href="javascript:void(0)" data-img="Valencia_sankey_plot_treshold=0.035.html">Valencia</a>
+                <a href="javascript:void(0)" data-img="Venice_sankey_plot_treshold=0.035.html">Venice</a>
+                <a href="javascript:void(0)" data-img="Vienna_sankey_plot_treshold=0.035.html">Vienna</a>
+            </div>
+        </div>
+
+        <iframe src="./html_graphs/Barcelona_sankey_plot_treshold=0.035.html"
+                style="border: none; overflow: hidden; width: 100%; height: 620px;"></iframe>
+    </div>
+</div>
+
+<script type="text/javascript">
+
+    var imgFolderPath = "/assets/html_graphs/";
+
+    $(".dropdown-content a").click(function () {
+        var nomeFile = $(this).data("img");
+        var el = $(this).parents(".imgChanger").find("iframe");
+        loadImg(imgFolderPath + nomeFile, el);
+    });
+
+    function loadImg(nomeFile, el) {
+        el.attr("src", nomeFile);
+    }
+</script>
+
+</body>
+</html>
