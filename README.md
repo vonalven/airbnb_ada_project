@@ -1,6 +1,6 @@
 # WHAT MAKES AN AIRBNB SUCCESSFUL ?
 
-The Data Story can be found [here](https://vonalven.github.io).
+The Data Story can be found [here](https://vonalven.github.io/airbnb_ada_project/).
 
 # Run the projet
 
